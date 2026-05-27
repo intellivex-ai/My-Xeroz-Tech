@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #000000;
+  --color-background: #f9f9f9;
+  --color-on-background: #1b1b1b;
+  --color-surface: #f9f9f9;
+  --color-surface-container: #eeeeee;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3f3f3;
+  --color-surface-container-high: #e8e8e8;
+  --color-surface-container-highest: #e2e2e2;
+  --color-surface-variant: #e2e2e2;
+  --color-secondary: #5d5f5f;
+  --color-on-secondary: #ffffff;
+  --color-on-tertiary-container: #848484;
+  --color-outline: #7e7576;
+  --color-outline-variant: #cfc4c5;
+  
+  --font-display: "Anybody", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --border-width-thin: 1px;
+  --border-width-thick: 3px;
+  
+  --spacing-grid-margin: 2rem;
+  --spacing-gutter: 0px;
+  --spacing-stack-sm: 8px;
+  --spacing-stack-md: 24px;
+  --spacing-stack-lg: 64px;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-mono antialiased overflow-x-hidden;
+  }
+}
+
+/* Custom scrollbar to match neo-brutalist theme */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #f9f9f9;
+  border-left: 3px solid #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #000000;
+  border: 2px solid #f9f9f9;
+}
+
+/* Neo-Brutalist Hard Shadows */
+.neo-shadow {
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+.neo-shadow-sm {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+.neo-shadow-lg {
+  box-shadow: 16px 16px 0px 0px #000000;
+}
+
+/* Inverted shadow for dark elements */
+.neo-shadow-white {
+  box-shadow: 8px 8px 0px 0px #ffffff;
+}
+
+/* Glitch Typography hover effects */
+.glitch-hover:hover {
+  animation: glitch 0.25s cubic-bezier(.25,.46,.45,.94) both infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+/* Slanted Slits and Brutalist slants */
+.clip-path-slant {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+}
+
+.custom-scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
