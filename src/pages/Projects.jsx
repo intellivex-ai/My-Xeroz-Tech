@@ -2,6 +2,7 @@ import Marquee from "../components/Marquee";
 import { ArrowUpRight, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReveal } from "../components/useReveal";
+import { img } from "framer-motion/client";
 
 export default function Projects() {
   const navigate = useNavigate();
@@ -9,34 +10,34 @@ export default function Projects() {
   const projectsList = [
     {
       num: "01",
-      category: "E-COMMERCE",
-      title: "CAROSELLING",
-      desc: "High-performance digital artifacts. Engineered for technical superiority and uncompromising visual impact. We build logic-based ecommerce experiences.",
-      chips: ["WEB ARCHITECTURE", "3D ASSETS", "NEXT.JS"],
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCsuFiBeFJcZ5m7EC75qFjQlmh7FhyyCT75uGCi3mSzMNmvLt-JFkTID6pfAdZ5Ziowu07T-xP4lswMV-bmt5Nk7tzXBXscoU882UxGJkIsSSlXHFDZimHWzaL2VUMhWfhqfInWBAI2MbvjnYQjHPIqjzUwzrgoaA1WhP8JZy6Un5Uq7iPU7S1gWCL8MhIND_urcqnOpZ-sreMMw49LZC6tuJeGio0PyepyOOZ0h7N0XKkKKVL8qRiBGX6zrI52mVJx9AGbyf-nDb3I"
+      category: "STATIC WEBSITE",
+      title: "DGS",
+      desc: "An ultra-lightweight static web architecture engineered for DGS. Built on a React.js foundation and enhanced with GSAP for fluid, zero-latency motion design.",
+      chips: ["WEB ARCHITECTURE", "GSAP", "REACT.JS"],
+      img: "src/assets/dgs.png"
     },
     {
       num: "02",
-      category: "FRAMEWORK",
-      title: "BRUTALISM",
-      desc: "Robust core framework leveraging raw semantic HTML and hard-grid layouts for unparalleled runtime speeds and architectural integrity.",
-      chips: ["DEVELOPMENT", "CORE LOGIC", "CSS4"],
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDoKh2QJs1TDumocuWElbhwz4YbWw8o1rZOfLR52GuEUEbGZIMgEnKnhkFAQA1wpJ3XDZVirtG2up_NpkhNSI09mwrxkfXR4BOpPuUUd-HSy3_m7HZiFD0Sq3BpKr34ZJHgtVRxbc1FfRRWk2xLWRDbvRkeUwgic3NRSCXO75nQBMigV2e1Ta1jsTSEezpXszR1RuRqL2yWA5qCtFRe6poiDO1PtuKoy0ZHfYccvxe9gmgSzDYa40D4mpJbGsNOnp92nU1h2jT-reF0"
+      category: "DYNAMIC WEB APP",
+      title: "HOMIZGO",
+      desc: "A resilient digital infrastructure engineered for dynamic user housing. We deployed complex core logic and hard-grid layouts to process high-volume data without sacrificing baseline performance or structural integrity.",
+      chips: ["DEVELOPMENT", "CORE LOGIC", "TAILWIND-CSS-V4 ", "GSAP", "REACT.JS" ],
+      img: "src/assets/homizgo.png"
     },
     {
       num: "03",
-      category: "APP DESIGN",
-      title: "XEROZ APP",
-      desc: "A next-generation mobile interface built for engineers. Real-time data visualization wrapped in a high-contrast industrial shell. Zero latency.",
-      chips: ["IOS/ANDROID", "FLUTTER", "SYSTEMS"],
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHSaCNcWlahMMpCdgZIilT-zjIMMVgsXILgFL01rQJEPcGokGRV2bg1HV0tg3Zk4lUsAKxD62i9P1YURk_u1vN_0DH_1t7nQvIP-Ujf_IZBBtgbLKjSM6h3FcU_uv5RNcCWUB8vUu6Cp3A146mco31ODZo1q-H7vhd2HbEBtBsGYrd5jM6KIU1DRQ1qjcXHqBxZaumvf4EDzyzBMtdJgB-ncCFXv1l6hozAnRVj8cBx083GoBQdu5x2YeYOO1j9PAm7BKC19dH64ZL"
+      category: "DESKTOP SOFTWARE AND PHONE APPLICATION",
+      title: "B.KUMAR'S ACADEMY",
+      desc: "A unified cross-platform ecosystem deployed for B.Kumar's Academy. Engineered with a robust React foundation to deliver synchronous, real-time data across desktop and mobile environments with absolute zero-latency execution.",
+      chips: ["DESKTOP APP", "PHONE APP", "TAILWIND-CSS-V4 ","REACT"],
+      img: "src/assets/bk.png"
     }
   ];
 
   const archivesList = [
     {
       num: "04",
-      title: "NEO-GLITCH",
+      title: "MY XEROZ TECH",
       desc: "Experimental typography system based on 1990s technical manuals.",
       tag: "2023 REVISION",
       bgClass: "bg-background hover:bg-surface-container-high"
@@ -53,7 +54,12 @@ export default function Projects() {
       title: "MONO-SYNC",
       desc: "Data aggregation platform for decentralized cloud networks.",
       tag: "INTERNAL TOOL",
-      bgClass: "bg-surface-variant hover:bg-primary hover:text-white"
+      bgClass: "bg-surface-variant hover:bg-primary hover:text-white",
+      numClass: "text-secondary group-hover:text-on-tertiary-container",
+      textClass: "text-primary group-hover:text-white",
+      descClass: "text-secondary group-hover:text-surface-variant",
+      borderClass: "border-primary group-hover:border-white",
+      tagClass: "text-secondary group-hover:text-white"
     }
   ];
 
@@ -162,13 +168,13 @@ export default function Projects() {
               style={{ transitionDelay: `${(idx + 1) * 0.1}s` }}
             >
               <div>
-                <div className="text-[10px] font-mono font-bold mb-4 group-hover:text-on-tertiary-container transition-colors">[ ARCHIVE / {archive.num} ]</div>
-                <h4 className="font-display text-headline-md font-black uppercase mb-2 text-primary group-hover:text-white transition-colors">{archive.title}</h4>
-                <p className="font-mono text-xs text-secondary group-hover:text-surface-variant uppercase leading-normal transition-colors">
+                <div className={`text-[10px] font-mono font-bold mb-4 transition-colors ${archive.numClass || "text-secondary"}`}>[ ARCHIVE / {archive.num} ]</div>
+                <h4 className={`font-display text-headline-md font-black uppercase mb-2 transition-colors ${archive.textClass || "text-primary"}`}>{archive.title}</h4>
+                <p className={`font-mono text-xs uppercase leading-normal transition-colors ${archive.descClass || "text-secondary"}`}>
                   {archive.desc}
                 </p>
               </div>
-              <div className="border-t border-primary group-hover:border-white pt-4 flex justify-between items-center select-none font-bold font-mono transition-colors">
+              <div className={`border-t pt-4 flex justify-between items-center select-none font-bold font-mono transition-colors ${archive.borderClass || "border-primary"} ${archive.tagClass || "text-secondary"}`}>
                 <span className="text-[9px]">{archive.tag}</span>
                 <ArrowUpRight size={14} />
               </div>
