@@ -78,11 +78,14 @@ export default function LoadingScreen({ onComplete, speedMultiplier = 1.0, pathn
 
   return (
     <div 
-      className={`fixed inset-0 w-screen h-screen z-[9999] bg-[#E6E6E6]/90 flex flex-col items-center justify-center overflow-hidden transition-all duration-500 ease-out ${
+      className={`fixed inset-0 w-screen h-screen z-[9999] bg-background flex flex-col items-center justify-center overflow-hidden loading-screen ${
         isDone 
           ? "opacity-0 pointer-events-none backdrop-blur-none scale-[0.98]" 
           : "opacity-100 pointer-events-auto backdrop-blur-[20px] scale-100"
       }`}
+      style={{
+        transition: "opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
+      }}
     >
       {/* Technical Industrial Dot Grid */}
       <div 

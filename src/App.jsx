@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import ThreeBackground from "./components/ThreeBackground";
 import BrutalistCursor from "./components/BrutalistCursor";
 import BrutalistHeader from "./components/BrutalistHeader";
 import Footer from "./components/Footer";
 import LoadingScreen from "./components/LoadingScreen";
+import { Plus } from "lucide-react";
 import { Agentation } from "agentation";
 
 // Page imports
@@ -37,8 +38,10 @@ function ScrollToTop() {
 // Global page loader transitions coordinator that resides inside the <Router> context
 function PageLoaderWrapper({ children }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isPageChanging, setIsPageChanging] = useState(false);
+  const [isThemeChanging, setIsThemeChanging] = useState(false);
   const [prevPath, setPrevPath] = useState(location.pathname);
 
   useEffect(() => {
@@ -48,30 +51,57 @@ function PageLoaderWrapper({ children }) {
     }
   }, [location.pathname, prevPath]);
 
+  // Listen for theme switch loader triggers
+  useEffect(() => {
+    const handleThemeToggleLoading = (e) => {
+      const { applyChange } = e.detail;
+      setIsThemeChanging(true);
+
+      // Apply the color scheme transition after 450ms when the loader is fully opaque
+      const applyTimer = setTimeout(() => {
+        if (applyChange) applyChange();
+      }, 450);
+
+      return () => clearTimeout(applyTimer);
+    };
+
+    window.addEventListener("theme-toggle-loading", handleThemeToggleLoading);
+    return () => {
+      window.removeEventListener("theme-toggle-loading", handleThemeToggleLoading);
+    };
+  }, []);
+
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("branding-loading-change", {
-      detail: { isLoading: isInitialLoading || isPageChanging }
+      detail: { isLoading: isInitialLoading || isPageChanging || isThemeChanging }
     }));
-  }, [isInitialLoading, isPageChanging]);
+  }, [isInitialLoading, isPageChanging, isThemeChanging]);
 
-  // Fallback: force-unstick isPageChanging after 5s if onComplete never fires
+  // Fallback: force-unstick page and theme loading indicators after 5s
   useEffect(() => {
-    if (!isPageChanging) return;
-    const timer = setTimeout(() => setIsPageChanging(false), 5000);
+    if (!isPageChanging && !isThemeChanging) return;
+    const timer = setTimeout(() => {
+      setIsPageChanging(false);
+      setIsThemeChanging(false);
+    }, 5000);
     return () => clearTimeout(timer);
-  }, [isPageChanging]);
+  }, [isPageChanging, isThemeChanging]);
 
   return (
     <>
       {/* 1. Initial Boot Majestic Loading overlay */}
       {isInitialLoading && (
-        <div className="fixed inset-0 z-[99999]">
+        <div className="fixed inset-0 z-[99999] loading-screen">
           <LoadingScreen
             speedMultiplier={2.5} // faster speed for initial branding impact
             pathname={location.pathname}
             onComplete={() => {
+              // Immediately signal that progress is complete to reveal underlying 3D element
+              window.dispatchEvent(new CustomEvent("branding-loading-change", {
+                detail: { isLoading: false }
+              }));
               // Smoothly fade out loader overlay
-              setTimeout(() => setIsInitialLoading(false), 500);
+              setTimeout(() => setIsInitialLoading(false), 800);
             }}
           />
         </div>
@@ -79,19 +109,56 @@ function PageLoaderWrapper({ children }) {
 
       {/* 2. Page Router Transition Loading overlay */}
       {!isInitialLoading && isPageChanging && (
-        <div className="fixed inset-0 z-[99999]">
+        <div className="fixed inset-0 z-[99999] loading-screen">
           <LoadingScreen
             speedMultiplier={4.5} // fast speed (1.8 seconds) to maintain ideal UX
             pathname={location.pathname}
             onComplete={() => {
+              // Immediately signal that progress is complete to reveal underlying 3D element
+              window.dispatchEvent(new CustomEvent("branding-loading-change", {
+                detail: { isLoading: false }
+              }));
               // Remove overlay on completion
-              setTimeout(() => setIsPageChanging(false), 500);
+              setTimeout(() => setIsPageChanging(false), 800);
+            }}
+          />
+        </div>
+      )}
+
+      {/* 3. Theme Toggle Loading overlay */}
+      {!isInitialLoading && !isPageChanging && isThemeChanging && (
+        <div className="fixed inset-0 z-[99999] loading-screen">
+          <LoadingScreen
+            speedMultiplier={5.5} // extremely snappy speed for seamless rocker feedback
+            pathname={location.pathname}
+            onComplete={() => {
+              // Immediately signal that progress is complete to reveal underlying 3D element
+              window.dispatchEvent(new CustomEvent("branding-loading-change", {
+                detail: { isLoading: false }
+              }));
+              // Remove overlay on completion
+              setTimeout(() => setIsThemeChanging(false), 800);
             }}
           />
         </div>
       )}
 
       {children}
+
+      {/* Global Hire floating FAB bottom right trigger */}
+      {!isInitialLoading && location.pathname !== "/contact" && (
+        <div 
+          onClick={() => navigate("/contact")}
+          className="fixed bottom-10 right-10 z-[100] group select-none cursor-pointer"
+        >
+          <div className="neo-shadow bg-background border-thick border-primary p-4 flex items-center gap-4 transition-transform group-hover:-translate-x-2 group-hover:-translate-y-2 group-active:translate-x-0 group-active:translate-y-0 select-none">
+            <span className="font-mono text-label-caps text-primary font-bold">HIRE US</span>
+            <div className="w-10 h-10 bg-primary text-on-secondary flex items-center justify-center font-bold">
+              <Plus size={20} />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

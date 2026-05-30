@@ -313,7 +313,7 @@ export default function Home() {
       className="w-full"
     >
       {/* Hero Section */}
-      <section ref={heroRef} className="min-h-[90vh] flex flex-col border-b-thick border-primary relative bg-background">
+      <section ref={heroRef} className="min-h-[90vh] flex flex-col border-b-thick border-primary relative bg-transparent">
         <div className="flex-grow grid grid-cols-1 md:grid-cols-12">
           {/* Main Copy */}
           <div className="md:col-span-8 p-6 md:p-12 border-r-0 md:border-r-thick border-primary flex flex-col justify-center select-none z-10">

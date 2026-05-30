@@ -237,18 +237,6 @@ export default function Projects() {
         </div>
       </main>
 
-      {/* Hire floating FAB bottom right trigger */}
-      <div 
-        onClick={() => navigate("/contact")}
-        className="fixed bottom-10 right-10 z-[100] group select-none cursor-pointer"
-      >
-        <div className="neo-shadow bg-background border-thick border-primary p-4 flex items-center gap-4 transition-transform group-hover:-translate-x-2 group-hover:-translate-y-2 group-active:translate-x-0 group-active:translate-y-0 select-none">
-          <span className="font-mono text-label-caps text-primary font-bold">HIRE US</span>
-          <div className="w-10 h-10 bg-primary text-on-secondary flex items-center justify-center font-bold">
-            <Plus size={20} />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

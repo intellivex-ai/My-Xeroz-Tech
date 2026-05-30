@@ -16,6 +16,13 @@ export default function BrutalistHeader() {
     return saved !== "true";
   });
 
+  // State to track the immediate visual state of the rocker switch to keep the UI snappy
+  const [visualChecked, setVisualChecked] = useState(isColorMode);
+
+  useEffect(() => {
+    setVisualChecked(isColorMode);
+  }, [isColorMode]);
+
   useEffect(() => {
     if (isColorMode) {
       document.documentElement.classList.remove("grayscale-mode");
@@ -27,7 +34,18 @@ export default function BrutalistHeader() {
   }, [isColorMode]);
 
   const handleToggleMode = () => {
-    setIsColorMode(prev => !prev);
+    const targetMode = !visualChecked;
+    setVisualChecked(targetMode); // Visual rocker transitions instantly
+
+    // Dispatch the custom theme-toggle-loading event to show the loading screen
+    window.dispatchEvent(new CustomEvent("theme-toggle-loading", {
+      detail: {
+        targetMode,
+        applyChange: () => {
+          setIsColorMode(targetMode); // Seamlessly switch color scheme under the loader overlay
+        }
+      }
+    }));
   };
 
   const renderThemeToggle = () => (
@@ -36,7 +54,7 @@ export default function BrutalistHeader() {
         <input 
           className="cb" 
           type="checkbox" 
-          checked={isColorMode}
+          checked={visualChecked}
           onChange={handleToggleMode}
           aria-label="Toggle B&W Grayscale Mode"
         />
@@ -90,8 +108,9 @@ export default function BrutalistHeader() {
           to="/"
           className="flex items-center gap-3 font-display text-headline-md font-black uppercase tracking-tighter text-primary glitch-hover cursor-pointer"
         >
-          <Logo className="w-8 h-8" />
-          <span>MY XEROZ TECH</span>
+          <Logo className="w-8 h-8 flex-shrink-0" />
+          <span className="hidden sm:inline">MY XEROZ TECH</span>
+          <span className="inline sm:hidden">XEROZ</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -114,30 +133,30 @@ export default function BrutalistHeader() {
         </nav>
 
         {/* Action Button & Grayscale Toggle */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
           {renderThemeToggle()}
           <button 
             onClick={() => navigate("/contact")}
-            className="bg-primary text-on-secondary font-mono text-label-caps px-6 py-3 border-2 border-primary hover:bg-background hover:text-primary transition-all duration-75 hover:scale-105 active:translate-y-[2px] cursor-pointer"
+            className="hidden md:block bg-primary text-on-secondary font-mono text-label-caps px-6 py-3 border-2 border-primary hover:bg-background hover:text-primary transition-all duration-75 hover:scale-105 active:translate-y-[2px] cursor-pointer"
           >
             CONTACT
           </button>
-        </div>
 
-        {/* Mobile Hamburger Toggle */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden border-thick border-primary bg-background p-2 hover:bg-primary hover:text-on-secondary transition-colors cursor-pointer"
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          {/* Mobile Hamburger Toggle */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden border-thick border-primary bg-background p-2 hover:bg-primary hover:text-on-secondary transition-colors cursor-pointer"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </header>
 
       {/* Mobile Drawer Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-40 bg-background pt-20 flex flex-col border-t-thick border-primary md:hidden animate-fade-in">
-          <div className="flex-grow flex flex-col justify-center px-grid-margin py-8 gap-6 border-b-thick border-primary">
+          <div className="flex-grow flex flex-col justify-center px-grid-margin py-8 gap-6 border-b-thick border-primary mobile-drawer-links">
             {navLinks.map((link, idx) => (
               <NavLink
                 key={link.name}
@@ -160,15 +179,12 @@ export default function BrutalistHeader() {
           </div>
           
           <div className="p-grid-margin bg-primary-container flex flex-col gap-5 items-center">
-            <div className="flex justify-center w-full py-1">
-              {renderThemeToggle()}
-            </div>
             <button
               onClick={() => {
                 setIsOpen(false);
                 navigate("/contact");
               }}
-              className="w-full bg-primary text-on-secondary py-5 font-display text-headline-md font-bold uppercase border-thick border-primary hover:bg-background hover:text-primary transition-all text-center cursor-pointer"
+              className="w-full bg-primary text-on-secondary py-5 font-display text-headline-md font-bold uppercase border-thick border-primary hover:bg-background hover:text-primary transition-all text-center cursor-pointer mobile-drawer-btn"
             >
               CONTACT // GO
             </button>

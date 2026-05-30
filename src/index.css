@@ -217,15 +217,29 @@ html:not(.grayscale-mode) {
               stroke 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-html.grayscale-mode {
+html.grayscale-mode main,
+html.grayscale-mode footer,
+html.grayscale-mode #three-background-canvas,
+html.grayscale-mode .loading-screen,
+html.grayscale-mode header > a,
+html.grayscale-mode header nav,
+html.grayscale-mode header button:not(.switch-control):not(.switch-container *),
+html.grayscale-mode .mobile-drawer-links,
+html.grayscale-mode .mobile-drawer-btn {
   filter: grayscale(100%);
 }
 
-/* 3D Rocker Switch Button (Same size as CONTACT button) */
 .switch-container {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .switch-container {
+    transform: scale(0.85);
+    transform-origin: right center;
+  }
 }
 
 .switch-control {
@@ -321,8 +335,9 @@ html.grayscale-mode {
   display: flex;
   width: 50%;
   height: 90%;
-  background-color: #f3f3f3;
-  color: #888888;
+  background: linear-gradient(135deg, #1A2BFE, #FF6B00);
+  color: #ffffff;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
   right: 0px;
   bottom: 0;
   align-items: center;
