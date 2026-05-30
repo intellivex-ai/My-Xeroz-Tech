@@ -36,7 +36,7 @@ function ScrollToTop() {
 }
 
 // Global page loader transitions coordinator that resides inside the <Router> context
-function PageLoaderWrapper({ children }) {
+function PageLoaderWrapper({ children, isMenuOpen }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -146,19 +146,25 @@ function PageLoaderWrapper({ children }) {
       {children}
 
       {/* Global Hire floating FAB bottom right trigger */}
-      {!isInitialLoading && location.pathname !== "/contact" && (
-        <div 
-          onClick={() => navigate("/contact")}
-          className="fixed bottom-10 right-10 z-[100] group select-none cursor-pointer"
-        >
-          <div className="neo-shadow bg-background border-thick border-primary p-4 flex items-center gap-4 transition-transform group-hover:-translate-x-2 group-hover:-translate-y-2 group-active:translate-x-0 group-active:translate-y-0 select-none">
-            <span className="font-mono text-label-caps text-primary font-bold">HIRE US</span>
-            <div className="w-10 h-10 bg-primary text-on-secondary flex items-center justify-center font-bold">
-              <Plus size={20} />
+      <AnimatePresence>
+        {!isInitialLoading && !isMenuOpen && location.pathname !== "/contact" && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ type: "spring", stiffness: 260, damping: 25 }}
+            onClick={() => navigate("/contact")}
+            className="fixed bottom-10 right-10 z-[100] group select-none cursor-pointer"
+          >
+            <div className="neo-shadow bg-background border-thick border-primary p-4 flex items-center gap-4 transition-transform group-hover:-translate-x-2 group-hover:-translate-y-2 group-active:translate-x-0 group-active:translate-y-0 select-none">
+              <span className="font-mono text-label-caps text-primary font-bold">HIRE US</span>
+              <div className="w-10 h-10 bg-primary text-on-secondary flex items-center justify-center font-bold">
+                <Plus size={20} />
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
@@ -187,12 +193,14 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <Router>
       <ScrollToTop />
       
       {/* Custom wrapper managing initial and routing loaders */}
-      <PageLoaderWrapper>
+      <PageLoaderWrapper isMenuOpen={isMenuOpen}>
         {/* Container wraps dynamic 3D canvas backdrop and elements */}
         <div className="relative min-h-screen flex flex-col justify-between overflow-hidden">
           {/* Three.js Wallpaper Backdrop */}
@@ -202,7 +210,7 @@ export default function App() {
           <BrutalistCursor />
           
           {/* Core Header Navigation */}
-          <BrutalistHeader />
+          <BrutalistHeader isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
 
           {/* Content Viewport */}
           <main className="flex-grow pt-20 w-full z-10">

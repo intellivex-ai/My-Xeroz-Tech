@@ -288,10 +288,10 @@ export default function Home() {
     },
     {
       num: "#004",
-      title: "PRODUCTS",
-      desc: "End-to-end product strategy and execution. From technical blueprint to market launch, we build scalable digital ecosystems.",
-      tags: ["STRATEGY", "MVP", "SCALING"],
-      icon: "inventory_2",
+      title: "SECURITY",
+      desc: "Comprehensive digital defense, security audits, and penetration testing. We fortify your systems to ensure bulletproof operations.",
+      tags: ["AUDIT", "DEFENSE", "COMPLIANCE"],
+      icon: "shield",
       cols: "md:col-span-7 border-b-0 border-primary",
       path: "/services"
     }
@@ -325,7 +325,7 @@ export default function Home() {
               variants={itemVariants} 
               className="font-display text-[50px] md:text-[100px] leading-[0.9] font-black uppercase tracking-tighter mb-8 break-words text-primary"
             >
-              XEROX TECH
+              MY<br />XEROZ TECH
             </motion.h1>
 
             <motion.p variants={itemVariants} className="font-display text-headline-md font-bold mb-12 uppercase leading-snug text-primary">
@@ -368,14 +368,14 @@ export default function Home() {
             {/* Status Panel */}
             <div className="z-10 p-8 text-on-secondary bg-primary w-full border-t-thick border-primary flex flex-col select-none relative">
               <span className="font-mono text-label-caps text-on-tertiary-container mb-2 font-bold">[ SYSTEM STATE ]</span>
-              <span className="font-display text-headline-md font-bold tracking-wider italic">XEROX_ENGINE // INTEGRITY_OK</span>
+              <span className="font-display text-headline-md font-bold tracking-wider italic">XEROZ_ENGINE // INTEGRITY_OK</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Repeating Marquee */}
-      <Marquee text="XEROX TECH // WEB DEV // DESIGN // STRATEGY // BRUTALIST // HIGH PERFORMANCE // " />
+      <Marquee text="MY XEROZ TECH // WEB DEV // DESIGN // STRATEGY // BRUTALIST // HIGH PERFORMANCE // " />
 
       {/* Focus Bento Grid Section */}
       <section className="focus-section p-6 md:p-12 bg-background select-none overflow-hidden">
@@ -562,7 +562,7 @@ export default function Home() {
           <div className="cta-button md:col-span-4 flex md:justify-end opacity-0">
             <button 
               onClick={() => navigate("/contact")}
-              className="bg-white text-primary font-display text-headline-md font-bold px-16 py-8 border-thick border-white hover:bg-primary hover:text-white transition-all duration-75 neo-shadow-white cursor-pointer active:translate-y-[2px]"
+              className="bg-white text-primary font-display text-headline-md font-bold px-16 py-8 border-thick border-white hover:bg-primary hover:text-white transition-all duration-75 neo-shadow cursor-pointer active:translate-y-[2px]"
             >
               GO // INITIATE
             </button>

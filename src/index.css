@@ -261,7 +261,7 @@ html.grayscale-mode .mobile-drawer-btn {
 
 /* Keyboard focus style for the 3D switch */
 .switch-control .cb:focus-visible + .toggle-bezel {
-  outline: 3px solid #000000;
+  outline: 3px solid var(--sys-primary);
   outline-offset: 3px;
   transform: scale(1.05);
 }
@@ -272,14 +272,14 @@ html.grayscale-mode .mobile-drawer-btn {
   cursor: pointer;
   width: 100%;
   height: 100%;
-  background-color: #000000;
+  background-color: var(--sys-primary);
   border-radius: 0px; /* brutalist border */
-  border: 2px solid #000000;
+  border: 2px solid var(--sys-primary);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   text-transform: uppercase;
   font-weight: 700;
   overflow: hidden;
-  box-shadow: 4px 4px 0px 0px #000000;
+  box-shadow: 4px 4px 0px 0px var(--sys-primary);
 }
 
 .toggle-bezel:hover {
@@ -288,7 +288,7 @@ html.grayscale-mode .mobile-drawer-btn {
 
 .toggle-bezel:active {
   transform: scale(1.05) translateY(2px);
-  box-shadow: 2px 2px 0px 0px #000000;
+  box-shadow: 2px 2px 0px 0px var(--sys-primary);
 }
 
 .toggle-bezel > .left-panel {

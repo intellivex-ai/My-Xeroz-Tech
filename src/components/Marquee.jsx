@@ -11,33 +11,19 @@ export default function Marquee({
     <div className={`w-full overflow-hidden border-b-thick border-primary select-none flex ${bgClass} group`}>
       <div
         className="flex whitespace-nowrap"
-        style={{ width: "max-content" }}
+        style={{
+          width: "max-content",
+          animation: `marquee ${speed}s linear infinite`,
+          animationDirection: reverse ? "reverse" : "normal",
+          animationPlayState: "running",
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.animationPlayState = "paused"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.animationPlayState = "running"; }}
       >
-        <div
-          className={`inline-block ${fontSizeClass}`}
-          style={{
-            animation: `marquee ${speed}s linear infinite`,
-            animationDirection: reverse ? "reverse" : "normal",
-            paddingRight: "2rem",
-            animationPlayState: "running",
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.animationPlayState = "paused"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.animationPlayState = "running"; }}
-        >
+        <div className={`inline-block ${fontSizeClass}`} style={{ paddingRight: "2rem" }}>
           {repeatedText}
         </div>
-        <div
-          className={`inline-block ${fontSizeClass}`}
-          style={{
-            animation: `marquee ${speed}s linear infinite`,
-            animationDirection: reverse ? "reverse" : "normal",
-            paddingRight: "2rem",
-            animationPlayState: "running",
-          }}
-          aria-hidden="true"
-          onMouseEnter={(e) => { e.currentTarget.style.animationPlayState = "paused"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.animationPlayState = "running"; }}
-        >
+        <div className={`inline-block ${fontSizeClass}`} style={{ paddingRight: "2rem" }} aria-hidden="true">
           {repeatedText}
         </div>
       </div>

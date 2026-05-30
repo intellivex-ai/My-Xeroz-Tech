@@ -76,7 +76,7 @@ export default function About() {
           text="NO FLUFF // RAW CODE // PURE UTILITY // " 
           speed={15} 
           bgClass="bg-transparent text-white border-b-0"
-          fontSizeClass="font-display text-headline-md font-bold uppercase italic py-2"
+          fontSizeClass="font-display text-[26px] md:text-display-sm font-black uppercase italic py-1"
         />
       </section>
 

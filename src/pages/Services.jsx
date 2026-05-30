@@ -31,9 +31,9 @@ export default function Services() {
     },
     {
       num: "04",
-      title: "DIGITAL PRODUCTS",
-      desc: "End-to-end product strategy and execution. From technical blueprint to market launch. We don't just build features; we build technical ecosystems.",
-      chips: ["STRATEGY", "MVP", "SCALING"],
+      title: "DIGITAL SECURITY",
+      desc: "Comprehensive digital defense, security audits, and penetration testing. We fortify your systems to ensure bulletproof operations. Zero tolerance for vulnerabilities.",
+      chips: ["AUDIT", "DEFENSE", "COMPLIANCE"],
       img: "https://lh3.googleusercontent.com/aida-public/AB6AXuA5ZLxZaA-Dpd9JWs-Vlg-RC9TTraKd5N_pNUUPU7ckuvNi4wrj6z9kRi9pX4Bc1o4n6Njf53QG5oURroXjq5mwZHhXOqFIIivXaY8wYwQNZLJ16_XOSbk4_oLng29lajD73x6H1oZC_Y3ezNOFLz7ciSjiofRwm7reB0nAr_bhZcnTY2F9IR3Bm4-u5HHb3QgVHnfg1awMTBLLFmXhIS-KzT_WHqJHryiYd0KJSeeOJ9Esu3Y_iJMm-isZAFTO8ZR-cNABeMY6RWDU"
     }
   ];
@@ -53,11 +53,12 @@ export default function Services() {
   return (
     <div className="w-full">
       {/* Marquee Header */}
-      <section className="border-b-thick border-primary bg-surface-container-high py-6 overflow-hidden">
+      <section className="border-b-thick border-primary bg-surface-container-high py-2 overflow-hidden">
         <Marquee 
-          text="SERVICES // WEB DEV // DIGITAL DESIGN // APPS // PRODUCTS // " 
+          text="SERVICES // WEB DEV // DIGITAL DESIGN // APPS // SECURITY // " 
           speed={15} 
           bgClass="bg-transparent text-primary border-b-0"
+          fontSizeClass="font-display text-[26px] md:text-display-sm font-black uppercase italic py-1"
         />
       </section>
 

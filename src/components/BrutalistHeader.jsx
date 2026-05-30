@@ -2,9 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import Logo from "./Logo";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function BrutalistHeader() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function BrutalistHeader({ isOpen: propIsOpen, setIsOpen: propSetIsOpen }) {
+  const [localIsOpen, setLocalIsOpen] = useState(false);
+  const isOpen = propIsOpen !== undefined ? propIsOpen : localIsOpen;
+  const setIsOpen = propSetIsOpen !== undefined ? propSetIsOpen : setLocalIsOpen;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollRef = useRef(0);
@@ -77,16 +80,65 @@ export default function BrutalistHeader() {
     const handleScroll = () => {
       const current = window.scrollY;
       setIsScrolled(current > 20);
+      
+      const diff = current - lastScrollRef.current;
       if (current > 100) {
-        setIsHidden(current > lastScrollRef.current);
+        if (diff > 5) {
+          setIsHidden(true);
+          lastScrollRef.current = current;
+        } else if (diff < -5) {
+          setIsHidden(false);
+          lastScrollRef.current = current;
+        }
       } else {
         setIsHidden(false);
+        lastScrollRef.current = current;
       }
-      lastScrollRef.current = current;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const drawerVariants = {
+    hidden: { x: "100%" },
+    visible: { 
+      x: 0,
+      transition: { 
+        type: "spring", 
+        stiffness: 280, 
+        damping: 30
+      }
+    },
+    exit: { 
+      x: "100%",
+      transition: { 
+        type: "spring", 
+        stiffness: 280, 
+        damping: 30 
+      }
+    }
+  };
+
+  const linkVariants = {
+    hidden: { opacity: 0, x: 80 },
+    visible: (idx) => ({ 
+      opacity: 1, 
+      x: 0,
+      transition: { 
+        type: "spring", 
+        stiffness: 250, 
+        damping: 25,
+        delay: 0.12 + idx * 0.07
+      }
+    }),
+    exit: { 
+      opacity: 0, 
+      x: 40,
+      transition: { 
+        duration: 0.18 
+      }
+    }
+  };
 
   const navLinks = [
     { name: "HOME", path: "/" },
@@ -98,19 +150,25 @@ export default function BrutalistHeader() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 flex justify-between items-center w-full px-grid-margin h-20 select-none transition-all duration-500 ease-out ${
-        isScrolled ? "bg-background/95 backdrop-blur-md" : "bg-background"
-      } ${
-        isHidden ? "-translate-y-full" : "translate-y-0"
-      } border-b-thick border-primary`}>
+      <motion.header
+        initial={{ y: 0 }}
+        animate={{ y: isHidden ? -100 : 0 }}
+        transition={{ 
+          duration: 0.45, 
+          ease: [0.16, 1, 0.3, 1],
+          delay: isHidden ? 0 : 0.2
+        }}
+        className={`fixed top-0 left-0 right-0 z-50 flex justify-between items-center w-full px-grid-margin h-20 select-none border-b-thick border-primary ${
+          isScrolled ? "bg-background/95 backdrop-blur-md" : "bg-background"
+        }`}
+      >
         {/* Title Logo */}
         <Link 
           to="/"
-          className="flex items-center gap-3 font-display text-headline-md font-black uppercase tracking-tighter text-primary glitch-hover cursor-pointer"
+          className="flex items-center gap-2 sm:gap-3 font-display text-[19px] sm:text-headline-md font-black uppercase tracking-tighter text-primary glitch-hover cursor-pointer"
         >
           <Logo className="w-8 h-8 flex-shrink-0" />
-          <span className="hidden sm:inline">MY XEROZ TECH</span>
-          <span className="inline sm:hidden">XEROZ</span>
+          <span>MY XEROZ TECH</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -151,46 +209,56 @@ export default function BrutalistHeader() {
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </header>
+      </motion.header>
 
       {/* Mobile Drawer Overlay */}
-      {isOpen && (
-        <div className="fixed inset-0 z-40 bg-background pt-20 flex flex-col border-t-thick border-primary md:hidden animate-fade-in">
-          <div className="flex-grow flex flex-col justify-center px-grid-margin py-8 gap-6 border-b-thick border-primary mobile-drawer-links">
-            {navLinks.map((link, idx) => (
-              <NavLink
-                key={link.name}
-                to={link.path}
-                onClick={() => setIsOpen(false)}
-                className={({ isActive }) => 
-                  `font-display text-[40px] font-black uppercase tracking-tighter ${
-                    isActive 
-                      ? "text-primary underline decoration-thick underline-offset-4" 
-                      : "text-secondary hover:text-primary"
-                  }`
-                }
-                style={{
-                  animation: `slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 0.05}s both`
-                }}
-              >
-                {link.name}
-              </NavLink>
-            ))}
-          </div>
-          
-          <div className="p-grid-margin bg-primary-container flex flex-col gap-5 items-center">
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                navigate("/contact");
-              }}
-              className="w-full bg-primary text-on-secondary py-5 font-display text-headline-md font-bold uppercase border-thick border-primary hover:bg-background hover:text-primary transition-all text-center cursor-pointer mobile-drawer-btn"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            variants={drawerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-40 bg-background pt-20 flex flex-col border-l-thick border-primary md:hidden"
+          >
+            <div className="flex-grow flex flex-col justify-center px-grid-margin py-8 gap-6 border-b-thick border-primary mobile-drawer-links">
+              {navLinks.map((link, idx) => (
+                <motion.div key={link.name} custom={idx} variants={linkVariants}>
+                  <NavLink
+                    to={link.path}
+                    onClick={() => setIsOpen(false)}
+                    className={({ isActive }) => 
+                      `font-display text-[40px] font-black uppercase tracking-tighter block ${
+                        isActive 
+                          ? "text-primary underline decoration-thick underline-offset-4" 
+                          : "text-secondary hover:text-primary"
+                      }`
+                    }
+                  >
+                    {link.name}
+                  </NavLink>
+                </motion.div>
+              ))}
+            </div>
+            
+            <motion.div 
+              custom={navLinks.length}
+              variants={linkVariants}
+              className="p-grid-margin bg-primary-container flex flex-col gap-5 items-center"
             >
-              CONTACT // GO
-            </button>
-          </div>
-        </div>
-      )}
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate("/contact");
+                }}
+                className="w-full bg-primary text-on-secondary py-5 font-display text-headline-md font-bold uppercase border-thick border-primary hover:bg-background hover:text-primary transition-all text-center cursor-pointer mobile-drawer-btn"
+              >
+                CONTACT // GO
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Local keyframe classes for slides */}
       <style>{`
