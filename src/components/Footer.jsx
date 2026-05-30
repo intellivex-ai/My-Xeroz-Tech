@@ -116,7 +116,7 @@ export default function Footer() {
             <Share2 size={18} />
           </button>
         </div>
-        <div className="font-mono text-[10px] text-on-tertiary-container opacity-60 font-bold uppercase tracking-widest text-right mt-6">
+        <div className="font-mono text-[10px] text-on-tertiary-container opacity-60 font-bold uppercase tracking-widest text-left md:text-right mt-6 md:mr-48">
           ©{new Date().getFullYear()} MY XEROZ TECH // ALL RIGHTS RESERVED
         </div>
       </div>

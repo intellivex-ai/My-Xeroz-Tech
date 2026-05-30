@@ -14,10 +14,8 @@ export default function BrutalistHeader({ isOpen: propIsOpen, setIsOpen: propSet
   const navigate = useNavigate();
 
   // State to track if Color mode (checked) or Grayscale/B&W mode (unchecked) is active
-  const [isColorMode, setIsColorMode] = useState(() => {
-    const saved = localStorage.getItem("grayscale-mode");
-    return saved !== "true";
-  });
+  // Always load the site in B&W (grayscale mode) by default on initial page load / refresh
+  const [isColorMode, setIsColorMode] = useState(false);
 
   // State to track the immediate visual state of the rocker switch to keep the UI snappy
   const [visualChecked, setVisualChecked] = useState(isColorMode);
@@ -168,7 +166,10 @@ export default function BrutalistHeader({ isOpen: propIsOpen, setIsOpen: propSet
           className="flex items-center gap-2 sm:gap-3 font-display text-[19px] sm:text-headline-md font-black uppercase tracking-tighter text-primary glitch-hover cursor-pointer"
         >
           <Logo className="w-8 h-8 flex-shrink-0" />
-          <span>MY XEROZ TECH</span>
+          <span className="leading-none">
+            MY <br className="sm:hidden" />
+            <span className="whitespace-nowrap">XEROZ TECH</span>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}

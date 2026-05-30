@@ -124,7 +124,7 @@ export default function Services() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Specifications List */}
           <div ref={useReveal()} className="reveal-left">
-            <h3 className="font-display text-[48px] font-black uppercase leading-none mb-8 text-primary">
+            <h3 className="font-display text-[32px] sm:text-[40px] md:text-[48px] font-black uppercase leading-none mb-8 text-primary">
               SPECIFICATIONS
             </h3>
             <div className="space-y-6 font-mono text-body-md">

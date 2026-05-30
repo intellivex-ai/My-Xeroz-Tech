@@ -101,7 +101,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".focus-section",
             start: "top 80%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
@@ -119,7 +119,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".stats-section",
             start: "top 85%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
@@ -139,7 +139,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".stats-section",
             start: "top 85%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           },
           onUpdate: () => {
             statNode.textContent = isDecimal
@@ -161,7 +161,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".operate-section",
             start: "top 80%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
@@ -179,7 +179,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".operate-section",
             start: "top 80%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
@@ -196,7 +196,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".reworks-section",
             start: "top 85%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
@@ -215,7 +215,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".reworks-section",
             start: "top 75%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
@@ -232,7 +232,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".cta-section",
             start: "top 85%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
@@ -248,7 +248,7 @@ export default function Home() {
           scrollTrigger: {
             trigger: ".cta-section",
             start: "top 85%",
-            toggleActions: "play none none none"
+            toggleActions: "play none none reverse"
           }
         }
       );
