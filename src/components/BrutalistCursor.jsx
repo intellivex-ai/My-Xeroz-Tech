@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export default function BrutalistCursor() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -8,17 +8,16 @@ export default function BrutalistCursor() {
   const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
-    // Check if it's a touch device or small screen
     const checkDevice = () => {
-      const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-      const isSmall = window.innerWidth <= 1024;
-      setIsMobile(hasTouch || isSmall);
+      const isSmall = window.innerWidth <= 768;
+      setIsMobile(isSmall);
     };
 
-    checkDevice();
+    // Always listen to resize
     window.addEventListener("resize", checkDevice);
 
-    if (isMobile) return;
+    // Initial check
+    checkDevice();
 
     const handleMouseMove = (e) => {
       setPosition({ x: e.clientX, y: e.clientY });
@@ -28,7 +27,6 @@ export default function BrutalistCursor() {
     const handleMouseDown = () => setIsClicking(true);
     const handleMouseUp = () => setIsClicking(false);
 
-    // Event listeners to detect hovers on links or buttons
     const handleMouseOver = (e) => {
       const target = e.target;
       if (
@@ -45,12 +43,22 @@ export default function BrutalistCursor() {
       }
     };
 
+    if (isMobile) {
+      document.body.style.cursor = "";
+      return () => {
+        window.removeEventListener("resize", checkDevice);
+      };
+    }
+
+    document.body.style.cursor = "none";
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("mouseover", handleMouseOver);
 
     return () => {
+      document.body.style.cursor = "";
       window.removeEventListener("resize", checkDevice);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
@@ -63,7 +71,7 @@ export default function BrutalistCursor() {
 
   return (
     <div
-      className="fixed pointer-events-none z-[9999] transition-transform duration-100 ease-out"
+      className="fixed pointer-events-none z-[9999] transition-transform duration-100 ease-out mix-blend-difference"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -71,7 +79,7 @@ export default function BrutalistCursor() {
       }}
     >
       <div 
-        className="w-6 h-6 border-2 border-white bg-white mix-blend-difference"
+        className="w-6 h-6 border-2 border-white bg-white"
         style={{
           borderRadius: "0px", // strictly flat corners
           transition: "width 0.15s, height 0.15s",

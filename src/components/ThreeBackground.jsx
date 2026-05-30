@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 export default function ThreeBackground() {
@@ -100,13 +100,18 @@ export default function ThreeBackground() {
         Math.random() * Math.PI
       );
 
-      // Store animation velocity properties
+      const initialX = mesh.position.x;
+      const initialRotX = mesh.rotation.x;
+      const initialRotY = mesh.rotation.y;
       mesh.userData = {
         spinX: (Math.random() - 0.5) * 0.005,
         spinY: (Math.random() - 0.5) * 0.005,
         floatSpeed: Math.random() * 0.002 + 0.001,
         floatRange: Math.random() * 1.5 + 0.5,
         initialY: mesh.position.y,
+        initialX: initialX,
+        initialRotX: initialRotX,
+        initialRotY: initialRotY,
         seed: Math.random() * 100,
       };
 
@@ -135,16 +140,34 @@ export default function ThreeBackground() {
     window.addEventListener("scroll", handleScroll);
 
     // Animation Loop
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
+    let timer = new THREE.Timer();
 
     const animate = () => {
       const reqId = requestAnimationFrame(animate);
 
-      const elapsedTime = clock.getElapsedTime();
+      const delta = clock.getDelta();
+      timer.update(delta);
 
-      // Smooth mouse easing
-      mouse.x += (targetMouse.x - mouse.x) * 0.05;
-      mouse.y += (targetMouse.y - mouse.y) * 0.05;
+      const elapsedTime = timer.getElapsed();
+
+      // Check color mode dynamically to colorize the 3D canvas
+      const isGrayscale = document.documentElement.classList.contains("grayscale-mode");
+      if (isGrayscale) {
+        gridMat.color.setHex(0x000000);
+        wireframeMat.color.setHex(0x000000);
+        gridMat.opacity = 0.15;
+        wireframeMat.opacity = 0.25;
+      } else {
+        gridMat.color.setHex(0x1A2BFE); // Royal Cobalt Blue grid lines in Color Mode
+        wireframeMat.color.setHex(0xFF6B00); // Electric Orange floating wireframes in Color Mode
+        gridMat.opacity = 0.25; // slightly higher opacity for colored aesthetics
+        wireframeMat.opacity = 0.35; // slightly higher opacity for colored aesthetics
+      }
+
+      // Smooth mouse easing with slightly slower response for more fluid feel
+      mouse.x += (targetMouse.x - mouse.x) * 0.03;
+      mouse.y += (targetMouse.y - mouse.y) * 0.03;
 
       // Smooth scroll easing
       scrollY += (targetScrollY - scrollY) * 0.05;
@@ -180,20 +203,23 @@ export default function ThreeBackground() {
       // 2. Animate Floating Brutalist Monoliths
       meshes.forEach((mesh) => {
         // Rotate monolith
-        mesh.rotation.x += mesh.userData.spinX + (scrollY * 0.00001);
-        mesh.rotation.y += mesh.userData.spinY + (scrollY * 0.00001);
+        const scrollRot = Math.min(scrollY * 0.00005, 0.3);
+        mesh.rotation.x = mesh.userData.initialRotX + Math.sin(elapsedTime * mesh.userData.spinX * 100) * 0.1 + scrollRot;
+        mesh.rotation.y = mesh.userData.initialRotY + Math.cos(elapsedTime * mesh.userData.spinY * 100) * 0.1 + scrollRot;
 
         // Sinusoidal float floating
         mesh.position.y = mesh.userData.initialY + 
           Math.sin(elapsedTime * 1.5 * mesh.userData.floatSpeed * 200 + mesh.userData.seed) * mesh.userData.floatRange;
 
         // Parallax horizontal shifts bound to mouse movement
-        mesh.position.x += (mouse.x * 0.1 - mesh.position.x * 0.01) * 0.05;
+        const targetOffsetX = mouse.x * 1.5;
+        mesh.position.x += (mesh.userData.initialX + targetOffsetX - mesh.position.x) * 0.02;
       });
 
-      // Camera parallax scroll shifts
-      camera.position.y = 5 - (scrollY * 0.005);
-      camera.lookAt(0, -scrollY * 0.002, 0);
+      // Camera parallax scroll shifts (clamped to prevent infinite drift)
+      const scrollCamOffset = Math.min(scrollY * 0.005, 8);
+      camera.position.y = 5 - scrollCamOffset;
+      camera.lookAt(0, Math.max(-scrollY * 0.002, -3), 0);
 
       renderer.render(scene, camera);
     };

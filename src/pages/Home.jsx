@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ArrowLeft, ArrowRight } from "lucide-react";
 import Marquee from "../components/Marquee";
@@ -13,6 +13,20 @@ gsap.registerPlugin(ScrollTrigger);
 function HeroScene3D({ containerRef }) {
   // Start with 89.9 (fully assembled) at the top of the fold
   const [progress, setProgress] = useState(89.9);
+  const [isGlobalLoading, setIsGlobalLoading] = useState(
+    typeof window !== "undefined" ? !!window.isBrandingLoading : true
+  );
+
+  useEffect(() => {
+    const handleLoadingChange = (e) => {
+      setIsGlobalLoading(e.detail.isLoading);
+    };
+
+    window.addEventListener("branding-loading-change", handleLoadingChange);
+    return () => {
+      window.removeEventListener("branding-loading-change", handleLoadingChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -38,7 +52,10 @@ function HeroScene3D({ containerRef }) {
   }, [containerRef]);
 
   return (
-    <div className="absolute inset-0 w-full h-full pointer-events-auto">
+    <div 
+      className="absolute inset-0 w-full h-full pointer-events-auto transition-opacity duration-500 ease-out"
+      style={{ opacity: isGlobalLoading ? 0 : 1 }}
+    >
       <Scene3D autoRun={false} progress={progress} />
     </div>
   );
@@ -266,7 +283,16 @@ export default function Home() {
       desc: "Visual systems that reject the polished, safe aesthetics of generic SaaS for something visceral.",
       tags: ["UI", "IDENTITY"],
       icon: "design_services",
-      cols: "md:col-span-5 md:col-start-8",
+      cols: "md:col-span-5 border-r-0 md:border-r-thin border-b-thin md:border-b-0 border-primary",
+      path: "/services"
+    },
+    {
+      num: "#004",
+      title: "PRODUCTS",
+      desc: "End-to-end product strategy and execution. From technical blueprint to market launch, we build scalable digital ecosystems.",
+      tags: ["STRATEGY", "MVP", "SCALING"],
+      icon: "inventory_2",
+      cols: "md:col-span-7 border-b-0 border-primary",
       path: "/services"
     }
   ];
@@ -323,18 +349,21 @@ export default function Home() {
           </div>
 
           {/* Interactive 3D Canvas Column */}
-          <div className="md:col-span-4 relative overflow-hidden bg-background border-t-thick md:border-t-0 border-primary min-h-[450px] md:min-h-0 flex flex-col justify-end">
-            {/* Technical Industrial Dot Grid */}
-            <div 
-              className="absolute inset-0 w-full h-full bg-surface-container" 
-              style={{ 
-                backgroundImage: 'radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px)', 
-                backgroundSize: '20px 20px' 
-              }} 
-            />
+          <div className="md:col-span-4 bg-background border-t-thick md:border-t-0 border-primary min-h-[450px] md:min-h-0 flex flex-col">
+            {/* 3D Scene Container */}
+            <div id="hero-3d-container" className="flex-grow relative overflow-hidden">
+              {/* Technical Industrial Dot Grid */}
+              <div 
+                className="absolute inset-0 w-full h-full bg-surface-container" 
+                style={{ 
+                  backgroundImage: 'radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px)', 
+                  backgroundSize: '20px 20px' 
+                }} 
+              />
 
-            {/* Embedded 3D Scene */}
-            <HeroScene3D containerRef={heroRef} />
+              {/* Embedded 3D Scene */}
+              <HeroScene3D containerRef={heroRef} />
+            </div>
             
             {/* Status Panel */}
             <div className="z-10 p-8 text-on-secondary bg-primary w-full border-t-thick border-primary flex flex-col select-none relative">
@@ -356,7 +385,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-0 border-thick border-primary bg-background">
-          {focusGrid.map((item, idx) => (
+          {focusGrid.map((item) => (
             <div
               key={item.title}
               onClick={() => navigate(item.path)}
@@ -412,7 +441,7 @@ export default function Home() {
       {/* Operate Process Grid */}
       <section className="operate-section p-6 md:p-12 grid grid-cols-1 md:grid-cols-12 gap-12 items-start bg-background overflow-hidden">
         {/* Sticky side */}
-        <div className="operate-sticky md:col-span-4 sticky top-32 select-none opacity-0">
+        <div className="operate-sticky md:col-span-4 md:sticky md:top-32 select-none opacity-0">
           <h2 className="font-display text-headline-lg font-black uppercase mb-6 leading-none text-primary">
             HOW WE
             <br />
@@ -492,7 +521,7 @@ export default function Home() {
               cat: "SAAS // 2023",
               img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBHgtKumCXE79W8z_mfv9YybKAsoqILQjaehubtOndVmDoEBTnEeIjfsf3FIrGDCt6DYLGGyrUbDejYHauxb3jVTqY-hj22gaVBx3Gtg3Cd-sxT2fbaaF7AJYHSW8NQJMTnOxEVnSf6VJbse1dDAe87aRzUPT0_02jthP4vbudVm06nbG2GuPlFFfGnAl0xEKsvyakAsdXFXCuhuTk_HmkfK43p2RWdKOMZb8t-oxhb-PziQaigQ0YWbNhKydX2He4ONt1zlT3WEg9c"
             }
-          ].map((project, idx) => (
+          ].map((project) => (
             <div 
               key={project.title} 
               onClick={() => navigate("/projects")}
@@ -500,7 +529,9 @@ export default function Home() {
             >
               <img 
                 alt={project.title} 
-                className="w-full h-full object-cover filter grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0 pointer-events-none"
+                className="w-full h-full object-cover filter grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0 pointer-events-none img-reveal"
+                loading="lazy"
+                onLoad={(e) => e.currentTarget.classList.add("loaded")}
                 src={project.img}
               />
               <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-40 transition-opacity duration-300 pointer-events-none"></div>

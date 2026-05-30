@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Terminal, Send, CheckCircle } from "lucide-react";
+import { useReveal } from "../components/useReveal";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", specs: "" });
@@ -16,7 +16,7 @@ export default function Contact() {
     "> COMPILING BLUEPRINT SPECIFICATION PAYLOAD...",
     "> ENCAPSULATING METADATA LOGS...",
     "> DISPATCHING PAYLOAD TO ENGINE COORDINATES...",
-    "> DEPLOYMENT COMPLETED SUCCESS // hello@xerox.tech (STATUS: 200 OK)"
+    "> DEPLOYMENT COMPLETED SUCCESS // hello@myxeroz.tech (STATUS: 200 OK)"
   ];
 
   const handleSubmit = (e) => {
@@ -50,18 +50,14 @@ export default function Contact() {
   }, [step]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full bg-background select-none min-h-[85vh] flex flex-col justify-center"
-    >
+    <div className="w-full bg-background select-none min-h-[85vh] flex flex-col justify-center">
       <section className="max-w-[1440px] mx-auto border-x-thick border-b-thick border-primary p-6 md:p-12 w-full flex-grow flex flex-col justify-center">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           
           {/* Informational Column */}
-          <div className="md:col-span-5 select-none">
+          <div ref={useReveal()} className="md:col-span-5 select-none reveal-left">
             <span className="font-mono text-label-caps text-secondary font-bold block mb-4">
-              [ INTIATION PROTOCOL ]
+              [ INITIATION PROTOCOL ]
             </span>
             <h1 className="font-display text-[48px] md:text-[80px] font-black uppercase leading-[0.9] mb-8 text-primary">
               INITIATE
@@ -78,13 +74,13 @@ export default function Contact() {
               </div>
               <div className="border-t border-primary/20 pt-2 flex justify-between">
                 <span>COMPILER AGENT</span>
-                <span className="font-bold text-primary">AGENT_XEROX_CORE_V4</span>
+                <span className="font-bold text-primary">AGENT_MY_XEROZ_CORE_V4</span>
               </div>
             </div>
           </div>
 
           {/* Form / Terminal Interface */}
-          <div className="md:col-span-7 bg-white border-thick border-primary p-8 neo-shadow relative overflow-hidden min-h-[500px] flex flex-col justify-between">
+          <div ref={useReveal()} className="md:col-span-7 bg-white border-thick border-primary p-8 neo-shadow relative overflow-hidden min-h-[500px] flex flex-col justify-between reveal-right">
             
             {step === "form" && (
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -201,6 +197,6 @@ export default function Contact() {
           to { opacity: 1; }
         }
       `}</style>
-    </motion.div>
+    </div>
   );
 }

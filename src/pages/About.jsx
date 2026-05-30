@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
 import Marquee from "../components/Marquee";
 import { Settings, GitBranch, Terminal, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useReveal } from "../components/useReveal";
 
 export default function About() {
   const navigate = useNavigate();
@@ -31,15 +31,11 @@ export default function About() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full"
-    >
+    <div className="w-full">
       {/* Identity Hero Section */}
       <section className="grid grid-cols-1 md:grid-cols-12 w-full border-b-thick border-primary bg-background select-none">
         {/* Left Column Text */}
-        <div className="md:col-span-8 p-6 md:p-12 flex flex-col justify-center border-b-thin md:border-b-0 md:border-r-thin border-primary select-none">
+        <div ref={useReveal()} className="md:col-span-8 p-6 md:p-12 flex flex-col justify-center border-b-thin md:border-b-0 md:border-r-thin border-primary select-none reveal">
           <span className="font-mono text-label-caps mb-4 font-bold text-primary">[ 01 // IDENTITY ]</span>
           <h1 className="font-display text-[55px] md:text-display-xl uppercase break-words leading-none font-black text-primary">
             RAW
@@ -55,7 +51,9 @@ export default function About() {
         <div className="md:col-span-4 bg-primary flex flex-col justify-between relative overflow-hidden p-8 min-h-[400px] md:min-h-auto border-t-thin md:border-t-0 border-primary">
           <img
             alt="Technical Grid backdrop"
-            className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none grayscale"
+            className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none grayscale img-reveal"
+            loading="lazy"
+            onLoad={(e) => e.currentTarget.classList.add('loaded')}
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsMKJ1WuvJsDOaTvu2achGIzR_xrdhMfGQQoiAa4NeU2cpHR7SxaQhfNkvfCp0GNchXk1wUtwVEg2jLOLfE787NLIS5jBluuJ60IADi12j8eZLt6X1xylQdC0MocTlXMJtF7a9Exy6G8up0cAmFV_og-kEgvxwLyDr4eZwVJnaqbjWRi1_w2AQDqiIXvWcWNZgR8_BCM5hT8kQM14fXcLT7kdNWqK2ZZ4fltlINzU-B7pjL5sP17FLjpUGXnDg1-NcSVPAnrLjVgDZ"
           />
           <div className="z-10 text-center text-on-secondary py-12 flex flex-col items-center justify-center h-full">
@@ -83,7 +81,7 @@ export default function About() {
       </section>
 
       {/* Principles Section */}
-      <section className="p-6 md:p-12 py-stack-lg select-none bg-background">
+      <section ref={useReveal()} className="p-6 md:p-12 py-stack-lg select-none bg-background reveal">
         <div className="mb-12 border-b-thick border-primary pb-4 flex justify-between items-end">
           <h2 className="font-display text-headline-lg font-black uppercase">PRINCIPLES</h2>
           <span className="font-mono text-label-caps text-secondary font-bold">[ DATA // BLUEPRINT ]</span>
@@ -154,7 +152,7 @@ export default function About() {
 
       {/* Architectural Overview + Clickable Blueprint Canvas */}
       <section className="grid grid-cols-1 md:grid-cols-2 w-full border-t-thick border-primary select-none bg-background">
-        <div className="p-6 md:p-12 border-b-thin md:border-b-0 md:border-r-thin border-primary select-none">
+        <div ref={useReveal()} className="p-6 md:p-12 border-b-thin md:border-b-0 md:border-r-thin border-primary select-none reveal-left">
           <div className="border-thick border-primary p-1 bg-primary mb-8 select-none"></div>
           <h4 className="font-mono text-label-caps mb-8 text-secondary font-bold">[ ARCHITECTURAL_OVERVIEW ]</h4>
           <p className="font-mono text-body-lg text-primary mb-8 leading-relaxed uppercase">
@@ -177,7 +175,7 @@ export default function About() {
         </div>
 
         {/* Blueprint Board component */}
-        <div className="p-6 md:p-12 flex flex-col justify-center items-center bg-surface-container-highest">
+        <div ref={useReveal()} className="p-6 md:p-12 flex flex-col justify-center items-center bg-surface-container-highest reveal-right">
           <div className="w-full max-w-md bg-background border-thick border-primary p-6 neo-shadow select-none">
             <div className="flex justify-between items-center mb-4 select-none">
               <div>
@@ -247,6 +245,6 @@ export default function About() {
           </a>
         </div>
       </section>
-    </motion.div>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Terminal, Cpu, HardDrive, Shield } from "lucide-react";
+import { useReveal } from "../components/useReveal";
 
 export default function Team() {
   const [activeConsole, setActiveConsole] = useState(null);
@@ -67,11 +68,7 @@ export default function Team() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full select-none bg-background"
-    >
+    <div className="w-full select-none bg-background">
       {/* Title Header */}
       <section className="p-6 md:p-12 border-b-thick border-primary bg-surface-container-lowest select-none">
         <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
@@ -92,19 +89,24 @@ export default function Team() {
       {/* Grid of Team Cards */}
       <section className="max-w-[1440px] mx-auto border-x-thick border-b-thick border-primary p-6 md:p-12 select-none">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {team.map((member) => {
+          {team.map((member, idx) => {
             const isConsoleOpen = activeConsole === member.id;
+            const cardRef = useReveal();
             
             return (
               <div 
                 key={member.id}
-                className="border-thick border-primary bg-white neo-shadow flex flex-col justify-between overflow-hidden"
+                ref={cardRef}
+                className="border-thick border-primary bg-white neo-shadow flex flex-col justify-between overflow-hidden reveal hover-lift"
+                style={{ transitionDelay: `${idx * 0.12}s` }}
               >
                 {/* Visual Header */}
                 <div className="relative overflow-hidden h-[300px] border-b-thick border-primary pointer-events-none select-none">
                   <img
                     alt={member.name}
-                    className="w-full h-full object-cover grayscale brightness-90 transition-all duration-300"
+                    className="w-full h-full object-cover grayscale brightness-90 transition-all duration-300 img-reveal"
+                    loading="lazy"
+                    onLoad={(e) => e.currentTarget.classList.add('loaded')}
                     src={member.avatar}
                   />
                   <span className="absolute bottom-4 left-4 bg-primary text-white px-3 py-1 font-mono text-[10px] font-bold">
@@ -170,6 +172,6 @@ export default function Team() {
           })}
         </div>
       </section>
-    </motion.div>
+    </div>
   );
 }

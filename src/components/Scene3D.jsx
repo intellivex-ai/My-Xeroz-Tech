@@ -1,6 +1,6 @@
-import { useRef, Suspense, useEffect } from 'react'
+import { useRef, useState, Suspense, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, ContactShadows } from '@react-three/drei'
+import { ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
 import { LOGO_GEOMETRIES } from './LogoGeometries'
 
@@ -24,6 +24,11 @@ function FloatingParticles({ count = 80 }) {
 
   useFrame((state, delta) => {
     if (!pointsRef.current) return
+    const isGrayscale = typeof document !== 'undefined' && document.documentElement.classList.contains("grayscale-mode");
+    if (pointsRef.current.material) {
+      pointsRef.current.material.color.set(isGrayscale ? "#1b1b1b" : "#FF6B00")
+      pointsRef.current.material.opacity = isGrayscale ? 0.15 : 0.25
+    }
     const geo = pointsRef.current.geometry
     const posAttr = geo.attributes.position
 
@@ -64,7 +69,7 @@ function FloatingParticles({ count = 80 }) {
   )
 }
 
-function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplier = 1, progress = 0 }) {
+function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplier = 1, progress = 0, scaleMultiplier = 1 }) {
   const groupRef = useRef()
   const { mouse, viewport } = useThree()
 
@@ -228,12 +233,17 @@ function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplie
       targets.glow = 1.6 * lockT + 0.3
     }
     else if (p < 90) {
-      // Phase 4: Static Hero Moment (75% to 90% progress)
-      const heroDrift = new THREE.Vector3(Math.sin(time * 0.8) * 0.06, Math.cos(time * 0.9) * 0.06, Math.sin(time * 0.7) * 0.04)
+      // Phase 4: Static Hero Moment (75% to 90% progress) - drift fades in smoothly to prevent sudden jumps
+      const driftScale = Math.min(1, (p - 75) / 5)
+      const heroDrift = new THREE.Vector3(
+        Math.sin(time * 0.8) * 0.06, 
+        Math.cos(time * 0.9) * 0.06, 
+        Math.sin(time * 0.7) * 0.04
+      ).multiplyScalar(driftScale)
       targets.leftBottom.pos.copy(olb).add(heroDrift)
       targets.right.pos.copy(or).add(heroDrift)
       targets.leftTop.pos.copy(olt).add(heroDrift)
-
+ 
       targets.leftBottom.rot.copy(orlb)
       targets.right.rot.copy(orr)
       targets.leftTop.rot.copy(orlt)
@@ -282,15 +292,23 @@ function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplie
     const time = state.clock.getElapsedTime()
     const targets = getTargets(p, time)
 
-    // Set custom spring physics parameters
+    // Set custom spring physics parameters smoothly to prevent discontinuities
     let tension = 15
     let friction = 4
-    if (p >= 55 && p < 75) {
+    if (p < 25) {
+      tension = 15
+      friction = 4
+    } else if (p < 55) {
+      const t = (p - 25) / 30
+      tension = THREE.MathUtils.lerp(15, 130, t)
+      friction = THREE.MathUtils.lerp(4, 13, t)
+    } else if (p < 75) {
       tension = 130  // High tension for snap-to-lock assembly
       friction = 13   // Friction to manage overshoot and settle
-    } else if (p >= 75 && p < 90) {
-      tension = 60
-      friction = 14
+    } else if (p < 90) {
+      const t = (p - 75) / 15
+      tension = THREE.MathUtils.lerp(130, 60, t)
+      friction = THREE.MathUtils.lerp(13, 14, t)
     }
 
     const applySpring = (current, target, vel, rotCurrent, rotTarget, rotVel) => {
@@ -332,12 +350,16 @@ function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplie
 
     const phys = physicsRef.current
 
+    // Check color mode dynamically to colorize the 3D scene
+    const isGrayscale = typeof document !== 'undefined' && document.documentElement.classList.contains("grayscale-mode");
+
     // Animate individual pieces with physics
     if (meshLeftBottomRef.current) {
       const mesh = meshLeftBottomRef.current
       applySpring(mesh.position, targets.leftBottom.pos, phys.leftBottom.vel, mesh.rotation, targets.leftBottom.rot, phys.leftBottom.rotVel)
       if (mesh.material) {
         mesh.material.opacity = targets.leftBottom.opacity
+        mesh.material.color.set(isGrayscale ? "#000000" : "#1A2BFE")
       }
     }
 
@@ -346,7 +368,8 @@ function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplie
       applySpring(mesh.position, targets.right.pos, phys.right.vel, mesh.rotation, targets.right.rot, phys.right.rotVel)
       if (mesh.material) {
         mesh.material.opacity = targets.right.opacity
-        mesh.material.emissive.set('#ffffff')
+        mesh.material.color.set(isGrayscale ? "#ffffff" : "#FF6B00")
+        mesh.material.emissive.set(isGrayscale ? "#ffffff" : "#FF6B00")
         mesh.material.emissiveIntensity = targets.glow
       }
     }
@@ -356,23 +379,29 @@ function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplie
       applySpring(mesh.position, targets.leftTop.pos, phys.leftTop.vel, mesh.rotation, targets.leftTop.rot, phys.leftTop.rotVel)
       if (mesh.material) {
         mesh.material.opacity = targets.leftTop.opacity
+        mesh.material.color.set(isGrayscale ? "#000000" : "#1A2BFE")
       }
     }
 
     // Set emissive light source intensity based on white element glow
     if (pointLightRef.current) {
       pointLightRef.current.intensity = targets.glow * 4.0
+      pointLightRef.current.color.set(isGrayscale ? "#ffffff" : "#FF6B00")
     }
 
     // Responsive scale logic to prevent overflowing on mobile (portrait aspect ratios)
     const aspect = viewport.aspect
     const scaleFactor = aspect < 1.0 ? (0.55 + 0.45 * aspect) : 1.0
 
-    // Snappy scale impact pulse at docking moment (around p = 70)
-    let targetScale = 1.25 * scaleFactor
-    if (p >= 69 && p < 72) {
-      targetScale = 1.35 * scaleFactor
+    // Smooth scale impact pulse at docking moment (around p = 70)
+    let pulse = 0
+    if (p >= 65 && p < 75) {
+      const t = (p - 65) / 10
+      pulse = Math.sin(t * Math.PI) * 0.1 // Peaks at +0.1 when t = 0.5 (p = 70)
     }
+    let targetScale = (1.25 + pulse) * scaleFactor
+
+    targetScale *= scaleMultiplier;
 
     if (groupRef.current) {
       groupRef.current.scale.x = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, 0.15)
@@ -387,13 +416,18 @@ function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplie
       groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.06)
     }
 
+    // Gentle floating animation (replaces removed Float wrapper)
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(time * 0.5) * 0.08;
+      groupRef.current.position.x = Math.sin(time * 0.3 + 1) * 0.04;
+    }
+
     // Camera dolly effect (slow motion over time)
     state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, 5.0 - Math.sin(time * 0.3) * 0.1, 0.05)
   })
 
   return (
-    <Float speed={1.0} rotationIntensity={0.02} floatIntensity={0.15}>
-      <group ref={groupRef}>
+    <group ref={groupRef}>
         {/* Left Bottom Mesh (mesh_id26) */}
         <mesh
           ref={meshLeftBottomRef}
@@ -483,14 +517,20 @@ function Model({ onProgressUpdate, pointLightRef, autoRun = true, speedMultiplie
             opacity={1}
           />
         </mesh>
-      </group>
-    </Float>
+    </group>
   )
 }
 
-export default function Scene3D({ onProgressUpdate, autoRun = true, speedMultiplier = 1, progress = 0 }) {
+export default function Scene3D({ onProgressUpdate, autoRun = true, speedMultiplier = 1, progress = 0, scaleMultiplier = 1 }) {
   const pointLightRef = useRef()
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', check)
+    check()
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   return (
     <Canvas
@@ -515,6 +555,7 @@ export default function Scene3D({ onProgressUpdate, autoRun = true, speedMultipl
           autoRun={autoRun}
           speedMultiplier={speedMultiplier}
           progress={progress}
+          scaleMultiplier={scaleMultiplier}
         />
         <FloatingParticles count={isMobile ? 35 : 65} />
       </Suspense>

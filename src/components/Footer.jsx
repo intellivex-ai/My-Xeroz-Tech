@@ -1,17 +1,18 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Mail, Globe, Share2 } from "lucide-react";
+import Logo from "./Logo";
 
 export default function Footer() {
   return (
-    <footer className="bg-primary text-on-secondary grid grid-cols-1 md:grid-cols-12 gap-0 w-full p-grid-margin border-t-thick border-primary dark:border-outline">
+    <footer className="bg-primary text-on-secondary grid grid-cols-1 md:grid-cols-12 gap-0 w-full p-grid-margin border-t-thick border-primary">
       {/* Brand Metadata */}
       <div className="md:col-span-4 mb-12 md:mb-0">
         <Link 
           to="/"
-          className="font-display text-headline-md font-black text-on-secondary uppercase mb-4 tracking-tighter block"
+          className="flex items-center gap-3 font-display text-headline-md font-black text-on-secondary uppercase mb-4 tracking-tighter"
         >
-          XEROX TECH
+          <Logo className="w-8 h-8" inverted={true} />
+          <span>MY XEROZ TECH</span>
         </Link>
         <p className="font-mono text-body-md text-on-tertiary-container max-w-xs leading-relaxed uppercase">
           AN UNAPOLOGETIC DIGITAL FACTORY FOR HIGH-PERFORMANCE BRANDS.
@@ -71,29 +72,42 @@ export default function Footer() {
       <div className="md:col-span-4 flex flex-col md:items-end justify-between select-none">
         <div className="flex gap-6 mb-8 md:mb-0">
           <a
-            href="mailto:hello@xerox.tech"
+            href="mailto:hello@myxeroz.tech"
             className="w-10 h-10 border border-on-secondary flex items-center justify-center hover:bg-background hover:text-primary transition-colors cursor-pointer"
             aria-label="Email Us"
           >
             <Mail size={18} />
           </a>
           <a
-            href="https://xerox.tech"
+            href="https://myxeroz.tech"
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-10 h-10 border border-on-secondary flex items-center justify-center hover:bg-background hover:text-primary transition-colors cursor-pointer"
             aria-label="Website"
           >
             <Globe size={18} />
           </a>
           <button
-            onClick={() => {
+            onClick={async () => {
               if (navigator.share) {
-                navigator.share({
-                  title: "Xerox Tech",
-                  url: window.location.origin
-                });
+                try {
+                  await navigator.share({
+                    title: "My Xeroz Tech",
+                    url: window.location.origin
+                  });
+                } catch (err) {
+                  // Ignore abort errors from user canceling share dialog
+                  if (err.name !== "AbortError") {
+                    console.error("Share failed:", err);
+                  }
+                }
               } else {
-                navigator.clipboard.writeText(window.location.origin);
-                alert("Copied site link to clipboard.");
+                try {
+                  await navigator.clipboard.writeText(window.location.origin);
+                  alert("Copied site link to clipboard.");
+                } catch {
+                  alert("Could not copy link. Copy the URL manually.");
+                }
               }
             }}
             className="w-10 h-10 border border-on-secondary flex items-center justify-center hover:bg-background hover:text-primary transition-colors cursor-pointer"
@@ -103,7 +117,7 @@ export default function Footer() {
           </button>
         </div>
         <div className="font-mono text-[10px] text-on-tertiary-container opacity-60 font-bold uppercase tracking-widest text-right mt-6">
-          ©2024 XEROX TECH // ALL RIGHTS RESERVED
+          ©{new Date().getFullYear()} MY XEROZ TECH // ALL RIGHTS RESERVED
         </div>
       </div>
     </footer>

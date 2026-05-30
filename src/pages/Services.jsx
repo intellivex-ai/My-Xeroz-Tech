@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
 import Marquee from "../components/Marquee";
 import { ArrowRight } from "lucide-react";
+import { useReveal } from "../components/useReveal";
 
 export default function Services() {
   const [formData, setFormData] = useState({ name: "", email: "", terms: false });
@@ -51,11 +51,7 @@ export default function Services() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full"
-    >
+    <div className="w-full">
       {/* Marquee Header */}
       <section className="border-b-thick border-primary bg-surface-container-high py-6 overflow-hidden">
         <Marquee 
@@ -67,10 +63,12 @@ export default function Services() {
 
       {/* Services spreadsheet list */}
       <section className="max-w-[1440px] mx-auto border-x-thick border-primary bg-background">
-        {services.map((service) => (
+        {services.map((service, idx) => (
           <div
             key={service.num}
-            className="grid grid-cols-1 md:grid-cols-12 border-b-thick border-primary group"
+            ref={useReveal({ threshold: 0.1 })}
+            className="grid grid-cols-1 md:grid-cols-12 border-b-thick border-primary group reveal"
+            style={{ transitionDelay: `${idx * 0.1}s` }}
           >
             {/* Number Column */}
             <div className="md:col-span-1 border-b-thin md:border-b-0 md:border-r-thin border-primary p-6 flex items-start justify-center select-none">
@@ -100,7 +98,9 @@ export default function Services() {
             <div className="md:col-span-4 border-b-thin md:border-b-0 md:border-r-thin border-primary relative overflow-hidden h-[300px] md:h-auto select-none pointer-events-none">
               <img
                 alt={service.title}
-                className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+                className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 img-reveal"
+                loading="lazy"
+                onLoad={(e) => e.currentTarget.classList.add("loaded")}
                 src={service.img}
               />
             </div>
@@ -122,7 +122,7 @@ export default function Services() {
       <section className="max-w-[1440px] mx-auto border-x-thick border-b-thick border-primary p-6 md:p-12 bg-surface select-none">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Specifications List */}
-          <div>
+          <div ref={useReveal()} className="reveal-left">
             <h3 className="font-display text-[48px] font-black uppercase leading-none mb-8 text-primary">
               SPECIFICATIONS
             </h3>
@@ -142,7 +142,7 @@ export default function Services() {
           </div>
 
           {/* Neo-brutalist Lead Capture Form */}
-          <div className="border-thick border-primary p-8 bg-white neo-shadow flex flex-col justify-between">
+          <div ref={useReveal()} className="reveal-right border-thick border-primary p-8 bg-white neo-shadow flex flex-col justify-between">
             <h4 className="font-display text-headline-md font-black uppercase mb-6 text-primary">
               REGISTRATION
             </h4>
@@ -221,6 +221,6 @@ export default function Services() {
           </div>
         </div>
       </section>
-    </motion.div>
+    </div>
   );
 }

@@ -1,38 +1,72 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useCallback } from "react";
 import Scene3D from "./Scene3D";
 
-export default function LoadingScreen({ onComplete, speedMultiplier = 1.0 }) {
+export default function LoadingScreen({ onComplete, speedMultiplier = 1.0, pathname = "/" }) {
   const canvasContainerRef = useRef(null);
   const [isDone, setIsDone] = useState(false);
+  const [scaleMult, setScaleMult] = useState(1.0);
+  const onCompleteRef = useRef(onComplete);
+  const pathnameRef = useRef(pathname);
+  onCompleteRef.current = onComplete;
+  pathnameRef.current = pathname;
 
-  const handleProgressUpdate = (p) => {
+  const doneRef = useRef(false);
+
+  const handleProgressUpdate = useCallback((p) => {
     let translateX = 0;
     let translateY = 0;
 
-    const isLandscape = typeof window !== "undefined" && window.innerWidth > window.innerHeight;
-    const shiftX = isLandscape ? (window.innerWidth > 1024 ? 680 : window.innerWidth * 0.28) : 0;
-    const shiftY = !isLandscape ? Math.min(250, window.innerHeight * 0.28) : 0;
+    let shiftX = 0;
+    let shiftY = 0;
+    let targetScaleMult = 1.0;
+
+    const isHomePage = pathnameRef.current === "/";
+    const heroContainer = isHomePage ? document.getElementById("hero-3d-container") : null;
+
+    if (heroContainer) {
+      const rect = heroContainer.getBoundingClientRect();
+      shiftX = (rect.left + rect.width / 2) - (window.innerWidth / 2);
+      shiftY = (rect.top + rect.height / 2) - (window.innerHeight / 2);
+
+      const heroAspect = rect.width / rect.height;
+      const scaleFactor_hero = heroAspect < 1.0 ? (0.55 + 0.45 * heroAspect) : 1.0;
+
+      const loadingAspect = window.innerWidth / window.innerHeight;
+      const scaleFactor_loading = loadingAspect < 1.0 ? (0.55 + 0.45 * loadingAspect) : 1.0;
+
+      targetScaleMult = (scaleFactor_hero / scaleFactor_loading) * (rect.height / window.innerHeight);
+    } else {
+      shiftX = 0;
+      shiftY = 0;
+      targetScaleMult = 1.0;
+    }
+
+    if (p < 78) {
+      setScaleMult(1.0);
+    }
 
     if (p >= 70 && p < 78) {
-      // Shake phase: Logo completed loading, now shakes rapidly
-      translateX = (Math.random() - 0.5) * 8; // 8px shake intensity
-      translateY = (Math.random() - 0.5) * 8;
+      const decay = 1 - (p - 70) / 8;
+      translateX = (Math.random() - 0.5) * 8 * decay;
+      translateY = (Math.random() - 0.5) * 8 * decay;
     } else if (p >= 78 && p < 89.9) {
-      // Slide phase: Logo smoothly slides
-      const t = (p - 78) / 11.9; // normalize to 0..1 range
-      const easedT = t * t * (3 - 2 * t); // smoothstep easing
+      const t = (p - 78) / 11.9;
+      const easedT = t * t * (3 - 2 * t);
       translateX = easedT * shiftX;
       translateY = easedT * shiftY;
+
+      const currentScaleMult = 1.0 + (targetScaleMult - 1.0) * easedT;
+      setScaleMult(currentScaleMult);
     } else if (p >= 89.9) {
-      // Hold position
       translateX = shiftX;
       translateY = shiftY;
+      setScaleMult(targetScaleMult);
 
-      // Trigger completion callback exactly once when reaching assembly cap
-      if (!isDone) {
+      if (!doneRef.current) {
+        doneRef.current = true;
         setIsDone(true);
-        if (onComplete) {
-          onComplete();
+        if (onCompleteRef.current) {
+          onCompleteRef.current();
         }
       }
     }
@@ -40,13 +74,24 @@ export default function LoadingScreen({ onComplete, speedMultiplier = 1.0 }) {
     if (canvasContainerRef.current) {
       canvasContainerRef.current.style.transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
     }
-  };
+  }, []);
 
   return (
-    <div className="fixed inset-0 w-screen h-screen z-[9999] bg-[#f9f9f9]/90 backdrop-blur-[20px] flex flex-col items-center justify-center overflow-hidden pointer-events-auto">
-      {/* Volumetric atmospheric background overlays */}
-      <div className="absolute inset-0 bg-[#f9f9f9]/35 backdrop-blur-[20px]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] rounded-full bg-black/[0.01] blur-[150px] pointer-events-none" />
+    <div 
+      className={`fixed inset-0 w-screen h-screen z-[9999] bg-[#E6E6E6]/90 flex flex-col items-center justify-center overflow-hidden transition-all duration-500 ease-out ${
+        isDone 
+          ? "opacity-0 pointer-events-none backdrop-blur-none scale-[0.98]" 
+          : "opacity-100 pointer-events-auto backdrop-blur-[20px] scale-100"
+      }`}
+    >
+      {/* Technical Industrial Dot Grid */}
+      <div 
+        className="absolute inset-0 w-full h-full bg-surface-container opacity-60" 
+        style={{ 
+          backgroundImage: 'radial-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px)', 
+          backgroundSize: '20px 20px' 
+        }} 
+      />
 
       {/* Screen Loader Tech readouts (Brutalist aesthetic match) */}
       <div className="absolute top-10 left-10 z-10 font-mono text-[10px] text-primary uppercase select-none tracking-widest leading-relaxed">
@@ -56,7 +101,7 @@ export default function LoadingScreen({ onComplete, speedMultiplier = 1.0 }) {
       </div>
 
       <div className="absolute bottom-10 right-10 z-10 font-mono text-[9px] text-secondary uppercase select-none tracking-widest font-bold">
-        XEROX ENGINE // LOADING
+        MY XEROZ ENGINE // LOADING
       </div>
 
       {/* Fullscreen transparent WebGL canvas wrapper */}
@@ -64,7 +109,7 @@ export default function LoadingScreen({ onComplete, speedMultiplier = 1.0 }) {
         ref={canvasContainerRef}
         className="w-full h-full transition-transform duration-75"
       >
-        <Scene3D onProgressUpdate={handleProgressUpdate} autoRun={true} speedMultiplier={speedMultiplier} />
+        <Scene3D onProgressUpdate={handleProgressUpdate} autoRun={true} speedMultiplier={speedMultiplier} scaleMultiplier={scaleMult} />
       </div>
     </div>
   );

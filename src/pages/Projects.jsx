@@ -1,18 +1,13 @@
-import React from "react";
-import { motion } from "framer-motion";
 import Marquee from "../components/Marquee";
 import { ArrowUpRight, ArrowRight, Star, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useReveal } from "../components/useReveal";
 
 export default function Projects() {
   const navigate = useNavigate();
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full"
-    >
+    <div className="w-full">
       {/* Header Marquee Ticker */}
       <section className="bg-primary text-on-secondary py-2 select-none overflow-hidden">
         <Marquee 
@@ -66,11 +61,13 @@ export default function Projects() {
           </div>
 
           {/* Project 01 Column (Caroselling) */}
-          <div className="md:col-span-6 border-b-thick border-r-0 md:border-r-thick border-primary group cursor-crosshair">
+          <div ref={useReveal()} className="md:col-span-6 border-b-thick border-r-0 md:border-r-thick border-primary group cursor-crosshair reveal">
             <div className="relative overflow-hidden border-b-thin border-primary h-[400px] md:h-[600px] select-none pointer-events-none">
               <img
                 alt="Caroselling Project"
-                className="w-full h-full object-cover filter grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                className="w-full h-full object-cover filter grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 img-reveal"
+                loading="lazy"
+                onLoad={(e) => e.currentTarget.classList.add("loaded")}
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsuFiBeFJcZ5m7EC75qFjQlmh7FhyyCT75uGCi3mSzMNmvLt-JFkTID6pfAdZ5Ziowu07T-xP4lswMV-bmt5Nk7tzXBXscoU882UxGJkIsSSlXHFDZimHWzaL2VUMhWfhqfInWBAI2MbvjnYQjHPIqjzUwzrgoaA1WhP8JZy6Un5Uq7iPU7S1gWCL8MhIND_urcqnOpZ-sreMMw49LZC6tuJeGio0PyepyOOZ0h7N0XKkKKVL8qRiBGX6zrI52mVJx9AGbyf-nDb3I"
               />
               <div className="absolute top-6 left-6 bg-primary text-white px-4 py-2 font-mono text-label-caps font-bold">
@@ -139,15 +136,19 @@ export default function Projects() {
                 <div className="flex -space-x-4">
                   <div className="w-12 h-12 border-2 border-primary bg-surface-container flex items-center justify-center overflow-hidden pointer-events-none">
                     <img
-                      className="grayscale pointer-events-none"
+                      className="grayscale pointer-events-none img-reveal"
                       alt="Processor"
+                      loading="lazy"
+                      onLoad={(e) => e.currentTarget.classList.add("loaded")}
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoKh2QJs1TDumocuWElbhwz4YbWw8o1rZOfLR52GuEUEbGZIMgEnKnhkFAQA1wpJ3XDZVirtG2up_NpkhNSI09mwrxkfXR4BOpPuUUd-HSy3_m7HZiFD0Sq3BpKr34ZJHgtVRxbc1FfRRWk2xLWRDbvRkeUwgic3NRSCXO75nQBMigV2e1Ta1jsTSEezpXszR1RuRqL2yWA5qCtFRe6poiDO1PtuKoy0ZHfYccvxe9gmgSzDYa40D4mpJbGsNOnp92nU1h2jT-reF0"
                     />
                   </div>
                   <div className="w-12 h-12 border-2 border-primary bg-surface-container-high flex items-center justify-center overflow-hidden pointer-events-none">
                     <img
-                      className="grayscale pointer-events-none"
+                      className="grayscale pointer-events-none img-reveal"
                       alt="Motherboard"
+                      loading="lazy"
+                      onLoad={(e) => e.currentTarget.classList.add("loaded")}
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX1g8YpvflbXZHC3u7QiiQfJeQkbJ4v2Yf5OSFnU_WJsS0fQt33JuvDh-UP-2PiUxK_V1T4JsGVw-SilkzCDVQQ_NhlARc1PXc5UpwMai8GLFWgcU74OKUO2gwTHeL4hdZU-aenzKFLkYP3sznV5TLyCiEDXYplCv2C12WYe_ix3pikuBG9sCfO9QKQKrvqcP2GGUEnGavx7HQPsvgiMbJfeA91fX-CvcnIxkFozAyp5lNqG8x6RkCmGOSJkJKsieNPkTEdeTKhrvi"
                     />
                   </div>
@@ -162,7 +163,9 @@ export default function Projects() {
             <div className="border-r-0 md:border-r-thin border-b border-primary p-0 relative overflow-hidden h-[400px] md:h-auto select-none pointer-events-none">
               <img
                 alt="Xerox App"
-                className="w-full h-full object-cover grayscale"
+                className="w-full h-full object-cover grayscale img-reveal"
+                loading="lazy"
+                onLoad={(e) => e.currentTarget.classList.add("loaded")}
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHSaCNcWlahMMpCdgZIilT-zjIMMVgsXILgFL01rQJEPcGokGRV2bg1HV0tg3Zk4lUsAKxD62i9P1YURk_u1vN_0DH_1t7nQvIP-Ujf_IZBBtgbLKjSM6h3FcU_uv5RNcCWUB8vUu6Cp3A146mco31ODZo1q-H7vhd2HbEBtBsGYrd5jM6KIU1DRQ1qjcXHqBxZaumvf4EDzyzBMtdJgB-ncCFXv1l6hozAnRVj8cBx083GoBQdu5x2YeYOO1j9PAm7BKC19dH64ZL"
               />
             </div>
@@ -189,7 +192,7 @@ export default function Projects() {
           </div>
 
           {/* Additional Mini Archives */}
-          <div className="md:col-span-3 border-b-thick border-r-0 md:border-r-thin border-primary p-6 flex flex-col justify-between min-h-[220px] select-none bg-background hover:bg-surface-container-high transition-colors">
+          <div ref={useReveal()} className="md:col-span-3 border-b-thick border-r-0 md:border-r-thin border-primary p-6 flex flex-col justify-between min-h-[220px] select-none bg-background hover:bg-surface-container-high transition-colors reveal hover-lift" style={{ transitionDelay: "0.1s" }}>
             <div>
               <div className="text-[10px] font-mono font-bold mb-4">[ ARCHIVE / 04 ]</div>
               <h4 className="font-display text-headline-md font-black uppercase mb-2 text-primary">NEO-GLITCH</h4>
@@ -203,7 +206,7 @@ export default function Projects() {
             </div>
           </div>
 
-          <div className="md:col-span-4 border-b-thick border-r-0 md:border-r-thin border-primary p-6 flex flex-col justify-between min-h-[220px] select-none bg-background hover:bg-surface-container-high transition-colors">
+          <div ref={useReveal()} className="md:col-span-4 border-b-thick border-r-0 md:border-r-thin border-primary p-6 flex flex-col justify-between min-h-[220px] select-none bg-background hover:bg-surface-container-high transition-colors reveal hover-lift" style={{ transitionDelay: "0.2s" }}>
             <div>
               <div className="text-[10px] font-mono font-bold mb-4">[ ARCHIVE / 05 ]</div>
               <h4 className="font-display text-headline-md font-black uppercase mb-2 text-primary">WIRE-F-01</h4>
@@ -217,7 +220,7 @@ export default function Projects() {
             </div>
           </div>
 
-          <div className="md:col-span-3 border-b-thick border-primary p-6 flex flex-col justify-between min-h-[220px] select-none bg-surface-variant hover:bg-primary hover:text-white transition-colors group">
+          <div ref={useReveal()} className="md:col-span-3 border-b-thick border-primary p-6 flex flex-col justify-between min-h-[220px] select-none bg-surface-variant hover:bg-primary hover:text-white transition-colors group reveal hover-lift" style={{ transitionDelay: "0.3s" }}>
             <div>
               <div className="text-[10px] font-mono font-bold mb-4 group-hover:text-on-tertiary-container">[ ARCHIVE / 06 ]</div>
               <h4 className="font-display text-headline-md font-black uppercase mb-2 text-primary group-hover:text-white">MONO-SYNC</h4>
@@ -246,6 +249,6 @@ export default function Projects() {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
