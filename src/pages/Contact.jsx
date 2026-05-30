@@ -16,7 +16,7 @@ export default function Contact() {
     "> COMPILING BLUEPRINT SPECIFICATION PAYLOAD...",
     "> ENCAPSULATING METADATA LOGS...",
     "> DISPATCHING PAYLOAD TO ENGINE COORDINATES...",
-    "> DEPLOYMENT COMPLETED SUCCESS // hello@myxeroz.tech (STATUS: 200 OK)"
+    "> DEPLOYMENT COMPLETED SUCCESS // hello@myxor.tech (STATUS: 200 OK)"
   ];
 
   const handleSubmit = (e) => {
@@ -112,7 +112,7 @@ export default function Contact() {
               </div>
               <div className="contact-coord border-t border-primary/20 pt-2 flex justify-between">
                 <span>COMPILER AGENT</span>
-                <span className="font-bold text-primary">AGENT_MY_XEROZ_CORE_V4</span>
+                <span className="font-bold text-primary">AGENT_MY_XOR_CORE_V4</span>
               </div>
             </div>
           </div>

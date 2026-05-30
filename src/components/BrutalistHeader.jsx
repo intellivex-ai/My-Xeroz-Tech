@@ -168,7 +168,7 @@ export default function BrutalistHeader({ isOpen: propIsOpen, setIsOpen: propSet
           <Logo className="w-8 h-8 flex-shrink-0" />
           <span className="leading-none">
             MY <br className="sm:hidden" />
-            <span className="whitespace-nowrap">XEROZ TECH</span>
+            <span className="whitespace-nowrap">XOR TECH</span>
           </span>
         </Link>
 

@@ -10,7 +10,7 @@ export default function Projects() {
   const archivesList = [
     {
       num: "04",
-      title: "MY XEROZ TECH",
+      title: "MY XOR TECH",
       desc: "A MODULAR DESIGN FRAMEWORK ENGINEERED FOR MAXIMUM VISUAL IMPACT. STRIPPED OF BLOAT AND OPTIMIZED FOR RAW, UNCOMPROMISING DIGITAL EXPERIENCES.",
       tag: "ACTIVE PROJECT",
       bgClass: "bg-background hover:bg-surface-container-high"
@@ -114,7 +114,7 @@ export default function Projects() {
       {/* Header Marquee Ticker */}
       <section className="bg-primary text-on-secondary py-2 select-none overflow-hidden">
         <Marquee 
-          text="CAROSELLING // BRUTALISM FRAMEWORK // XEROZ APP // " 
+          text="CAROSELLING // BRUTALISM FRAMEWORK // XOR APP // " 
           speed={18} 
           bgClass="bg-transparent text-white border-b-0"
           fontSizeClass="font-display text-[26px] md:text-display-sm font-black uppercase italic py-1"

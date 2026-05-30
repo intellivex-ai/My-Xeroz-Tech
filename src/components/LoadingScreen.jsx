@@ -104,7 +104,7 @@ export default function LoadingScreen({ onComplete, speedMultiplier = 1.0, pathn
       </div>
 
       <div className="absolute bottom-10 right-10 z-10 font-mono text-[9px] text-secondary uppercase select-none tracking-widest font-bold">
-        MY XEROZ ENGINE // LOADING
+        MY XOR ENGINE // LOADING
       </div>
 
       {/* Fullscreen transparent WebGL canvas wrapper */}

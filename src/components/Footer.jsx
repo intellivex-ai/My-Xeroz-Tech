@@ -43,7 +43,7 @@ export default function Footer() {
           className="flex items-center gap-3 font-display text-headline-md font-black text-on-secondary uppercase mb-4 tracking-tighter"
         >
           <Logo className="w-8 h-8" inverted={true} />
-          <span>MY XEROZ TECH</span>
+          <span>MY XOR TECH</span>
         </Link>
         <p className="font-mono text-body-md text-on-tertiary-container max-w-xs leading-relaxed uppercase">
           AN UNAPOLOGETIC DIGITAL FACTORY FOR HIGH-PERFORMANCE BRANDS.
@@ -105,14 +105,14 @@ export default function Footer() {
       <div className="md:col-span-4 flex flex-col md:items-end justify-between select-none">
         <div className="footer-social flex gap-6 mb-8 md:mb-0">
           <a
-            href="mailto:hello@myxeroz.tech"
+            href="mailto:hello@myxor.tech"
             className="footer-social-icon w-10 h-10 border border-on-secondary flex items-center justify-center hover:bg-background hover:text-primary transition-colors cursor-pointer"
             aria-label="Email Us"
           >
             <Mail size={18} />
           </a>
           <a
-            href="https://myxeroz.tech"
+            href="https://myxor.tech"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-social-icon w-10 h-10 border border-on-secondary flex items-center justify-center hover:bg-background hover:text-primary transition-colors cursor-pointer"
@@ -125,7 +125,7 @@ export default function Footer() {
               if (navigator.share) {
                 try {
                   await navigator.share({
-                    title: "My Xeroz Tech",
+                    title: "My Xor Tech",
                     url: window.location.origin
                   });
                 } catch (err) {
@@ -150,7 +150,7 @@ export default function Footer() {
           </button>
         </div>
         <div className="footer-copyright font-mono text-[10px] text-on-tertiary-container opacity-60 font-bold uppercase tracking-widest text-left md:text-right mt-6 md:mr-48">
-          ©{new Date().getFullYear()} MY XEROZ TECH // ALL RIGHTS RESERVED
+          ©{new Date().getFullYear()} MY XOR TECH // ALL RIGHTS RESERVED
         </div>
       </div>
     </footer>

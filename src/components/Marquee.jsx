@@ -1,5 +1,5 @@
 export default function Marquee({
-  text = "MY XEROZ TECH // RAW CODE // BRUTALIST FRAMEWORK // HIGH PERFORMANCE // ",
+  text = "MY XOR TECH // RAW CODE // BRUTALIST FRAMEWORK // HIGH PERFORMANCE // ",
   speed = 20,
   bgClass = "bg-primary text-on-secondary",
   fontSizeClass = "font-display text-headline-md font-black uppercase italic py-4",

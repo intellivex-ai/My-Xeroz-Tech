@@ -399,7 +399,7 @@ export default function Home() {
               variants={itemVariants} 
               className="font-display text-[50px] md:text-[100px] leading-[0.9] font-black uppercase tracking-tighter mb-8 break-words text-primary"
             >
-              MY<br />XEROZ TECH
+              MY<br />XOR TECH
             </motion.h1>
 
             <motion.p variants={itemVariants} className="font-display text-headline-md font-bold mb-12 uppercase leading-snug text-primary">
@@ -442,14 +442,14 @@ export default function Home() {
             {/* Status Panel */}
             <div className="z-10 p-8 text-on-secondary bg-primary w-full border-t-thick border-primary flex flex-col select-none relative">
               <span className="font-mono text-label-caps text-on-tertiary-container mb-2 font-bold">[ SYSTEM STATE ]</span>
-              <span className="font-display text-headline-md font-bold tracking-wider italic">XEROZ_ENGINE // INTEGRITY_OK</span>
+              <span className="font-display text-headline-md font-bold tracking-wider italic">XOR_ENGINE // INTEGRITY_OK</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Repeating Marquee */}
-      <Marquee text="MY XEROZ TECH // WEB DEV // DESIGN // STRATEGY // BRUTALIST // HIGH PERFORMANCE // " />
+      <Marquee text="MY XOR TECH // WEB DEV // DESIGN // STRATEGY // BRUTALIST // HIGH PERFORMANCE // " />
 
       {/* Focus Bento Grid Section */}
       <section className="focus-section p-6 md:p-12 bg-background select-none overflow-hidden">
