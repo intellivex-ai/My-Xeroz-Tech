@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Marquee from "../components/Marquee";
 import { ArrowRight } from "lucide-react";
-import { useReveal } from "../components/useReveal";
+import { useScrollAnimations, scrollPresets } from "../components/useScrollAnimations";
 
 export default function Services() {
   const [formData, setFormData] = useState({ name: "", email: "", terms: false });
@@ -50,8 +50,71 @@ export default function Services() {
     }, 1500);
   };
 
+  // GSAP ScrollTrigger animations scoped to the page
+  const pageRef = useScrollAnimations((container) => {
+    // 1. Service rows — each row animates independently with scrub parallax on image
+    services.forEach((_, idx) => {
+      const row = `.svc-row-${idx}`;
+      
+      // Content block slides from left
+      scrollPresets.slideLeft(
+        row,
+        `${row} .svc-content`,
+        { duration: 1.0, start: "top 85%" }
+      );
+
+      // Number column clip reveal
+      scrollPresets.clipReveal(
+        row,
+        `${row} .svc-num`,
+        { duration: 0.8, start: "top 85%" }
+      );
+
+      // Image parallax scroll
+      scrollPresets.parallax(
+        row,
+        `${row} .svc-img`,
+        { yStart: 40, yEnd: -40, scrub: 1.5 }
+      );
+
+      // GO button scale reveal
+      scrollPresets.scaleReveal(
+        row,
+        `${row} .svc-action`,
+        { duration: 0.8, start: "top 75%" }
+      );
+
+      // Chips stagger fade up
+      scrollPresets.fadeUpScale(
+        row,
+        `${row} .svc-chip`,
+        { stagger: 0.08, duration: 0.6, start: "top 80%" }
+      );
+    });
+
+    // 2. Specifications section
+    scrollPresets.clipReveal(
+      ".svc-specs-section",
+      ".svc-specs-title",
+      { duration: 1.0, start: "top 85%" }
+    );
+
+    scrollPresets.staggerAlternate(
+      ".svc-specs-section",
+      ".svc-spec-item",
+      { stagger: 0.12, duration: 0.8 }
+    );
+
+    // 3. Registration form slide from right with scale
+    scrollPresets.slideRight(
+      ".svc-specs-section",
+      ".svc-form",
+      { duration: 1.2, start: "top 80%" }
+    );
+  }, []);
+
   return (
-    <div className="w-full">
+    <div ref={pageRef} className="w-full">
       {/* Marquee Header */}
       <section className="border-b-thick border-primary bg-surface-container-high py-2 overflow-hidden">
         <Marquee 
@@ -67,17 +130,15 @@ export default function Services() {
         {services.map((service, idx) => (
           <div
             key={service.num}
-            ref={useReveal({ threshold: 0.1 })}
-            className="grid grid-cols-1 md:grid-cols-12 border-b-thick border-primary group reveal"
-            style={{ transitionDelay: `${idx * 0.1}s` }}
+            className={`svc-row-${idx} grid grid-cols-1 md:grid-cols-12 border-b-thick border-primary group overflow-hidden`}
           >
             {/* Number Column */}
             <div className="md:col-span-1 border-b-thin md:border-b-0 md:border-r-thin border-primary p-6 flex items-start justify-center select-none">
-              <span className="font-display text-[28px] font-black text-primary">{service.num}</span>
+              <span className="svc-num font-display text-[28px] font-black text-primary">{service.num}</span>
             </div>
 
             {/* Content Column */}
-            <div className="md:col-span-5 border-b-thin md:border-b-0 md:border-r-thin border-primary p-8 flex flex-col justify-between min-h-[400px]">
+            <div className="svc-content md:col-span-5 border-b-thin md:border-b-0 md:border-r-thin border-primary p-8 flex flex-col justify-between min-h-[400px]">
               <div>
                 <h2 className="font-display text-headline-md md:text-headline-lg font-black uppercase mb-4 leading-none text-primary group-hover:skew-x-[-6deg] transition-transform select-none">
                   {service.title}
@@ -88,7 +149,7 @@ export default function Services() {
               </div>
               <div className="flex flex-wrap gap-3 mt-8 select-none">
                 {service.chips.map((c) => (
-                  <span key={c} className="px-3 py-1 border border-primary font-mono text-[10px] font-bold tracking-wider">
+                  <span key={c} className="svc-chip px-3 py-1 border border-primary font-mono text-[10px] font-bold tracking-wider">
                     {c}
                   </span>
                 ))}
@@ -99,7 +160,7 @@ export default function Services() {
             <div className="md:col-span-4 border-b-thin md:border-b-0 md:border-r-thin border-primary relative overflow-hidden h-[300px] md:h-auto select-none pointer-events-none">
               <img
                 alt={service.title}
-                className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 img-reveal"
+                className="svc-img w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 img-reveal"
                 loading="lazy"
                 onLoad={(e) => e.currentTarget.classList.add("loaded")}
                 src={service.img}
@@ -110,7 +171,7 @@ export default function Services() {
             <div className="md:col-span-2 flex items-center justify-center p-8 bg-surface group-hover:bg-primary transition-colors duration-300">
               <button 
                 onClick={() => alert(`INITIALIZING PROTOCOL: ${service.title}`)}
-                className="w-24 h-24 rounded-full border-thick border-primary flex items-center justify-center font-display text-headline-md font-bold text-primary group-hover:text-white group-hover:border-white transition-all hover:scale-110 active:translate-y-[2px] cursor-pointer"
+                className="svc-action w-24 h-24 rounded-full border-thick border-primary flex items-center justify-center font-display text-headline-md font-bold text-primary group-hover:text-white group-hover:border-white transition-all hover:scale-110 active:translate-y-[2px] cursor-pointer"
               >
                 GO
               </button>
@@ -120,11 +181,11 @@ export default function Services() {
       </section>
 
       {/* Specifications & Registration Forms */}
-      <section className="max-w-[1440px] mx-auto border-x-thick border-b-thick border-primary p-6 md:p-12 bg-surface select-none">
+      <section className="svc-specs-section max-w-[1440px] mx-auto border-x-thick border-b-thick border-primary p-6 md:p-12 bg-surface select-none overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Specifications List */}
-          <div ref={useReveal()} className="reveal-left">
-            <h3 className="font-display text-[32px] sm:text-[40px] md:text-[48px] font-black uppercase leading-none mb-8 text-primary">
+          <div>
+            <h3 className="svc-specs-title font-display text-[32px] sm:text-[40px] md:text-[48px] font-black uppercase leading-none mb-8 text-primary">
               SPECIFICATIONS
             </h3>
             <div className="space-y-6 font-mono text-body-md">
@@ -134,7 +195,7 @@ export default function Services() {
                 { num: "03", text: "Asymmetric layout protocol" },
                 { num: "04", text: "Hard-offset shadow system" },
               ].map((spec) => (
-                <div key={spec.num} className="flex gap-4 border-b border-primary pb-4 items-center">
+                <div key={spec.num} className="svc-spec-item flex gap-4 border-b border-primary pb-4 items-center">
                   <span className="font-bold text-[18px] text-primary">{spec.num}</span>
                   <p className="uppercase tracking-wider">{spec.text}</p>
                 </div>
@@ -143,7 +204,7 @@ export default function Services() {
           </div>
 
           {/* Neo-brutalist Lead Capture Form */}
-          <div ref={useReveal()} className="reveal-right border-thick border-primary p-8 bg-white neo-shadow flex flex-col justify-between">
+          <div className="svc-form border-thick border-primary p-8 bg-white neo-shadow flex flex-col justify-between">
             <h4 className="font-display text-headline-md font-black uppercase mb-6 text-primary">
               REGISTRATION
             </h4>

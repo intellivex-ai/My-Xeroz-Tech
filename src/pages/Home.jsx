@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Scene3D from "../components/Scene3D";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { projectsList } from "../data/projects";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,13 +89,47 @@ export default function Home() {
     // GSAP Context scopes selectors to the page container for clean cleanup on unmount
     const ctx = gsap.context(() => {
       
-      // 1. Focus Section Bento Cards Staggered Slide In
+      // 0. Focus Section Header — clip reveal + line grow
+      gsap.fromTo(
+        ".focus-section .section-header-title",
+        { clipPath: "inset(100% 0% 0% 0%)", opacity: 0 },
+        {
+          clipPath: "inset(0% 0% 0% 0%)",
+          opacity: 1,
+          duration: 1.2,
+          ease: "power4.out",
+          scrollTrigger: {
+            trigger: ".focus-section",
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      gsap.fromTo(
+        ".focus-section .section-header-line",
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 1.4,
+          ease: "power3.inOut",
+          transformOrigin: "left center",
+          scrollTrigger: {
+            trigger: ".focus-section",
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      // 1. Focus Section Bento Cards Staggered Slide In with rotation
       gsap.fromTo(
         ".focus-card",
-        { y: 80, opacity: 0 },
+        { y: 80, opacity: 0, rotation: -2 },
         {
           y: 0,
           opacity: 1,
+          rotation: 0,
           duration: 1.0,
           stagger: 0.18,
           ease: "power3.out",
@@ -106,13 +141,14 @@ export default function Home() {
         }
       );
 
-      // 2. Stats Section Cards Reveal
+      // 2. Stats Section Cards Reveal with scale
       gsap.fromTo(
         ".stat-card",
-        { y: 50, opacity: 0 },
+        { y: 50, opacity: 0, scale: 0.9 },
         {
           y: 0,
           opacity: 1,
+          scale: 1,
           duration: 0.8,
           stagger: 0.12,
           ease: "power3.out",
@@ -149,15 +185,15 @@ export default function Home() {
         });
       });
 
-      // 4. Operate Section Sticky Title
+      // 4. Operate Section Sticky Title — clip reveal from right
       gsap.fromTo(
         ".operate-sticky",
-        { x: -50, opacity: 0 },
+        { clipPath: "inset(0% 100% 0% 0%)", opacity: 0 },
         {
-          x: 0,
+          clipPath: "inset(0% 0% 0% 0%)",
           opacity: 1,
-          duration: 1.0,
-          ease: "power3.out",
+          duration: 1.2,
+          ease: "power4.out",
           scrollTrigger: {
             trigger: ".operate-section",
             start: "top 80%",
@@ -166,33 +202,36 @@ export default function Home() {
         }
       );
 
-      // 5. Operate Section Process Steps Staggered Slide In
-      gsap.fromTo(
-        ".process-item",
-        { x: 80, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 1.0,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".operate-section",
-            start: "top 80%",
-            toggleActions: "play none none reverse"
+      // 5. Operate Section Process Steps — alternating slide directions
+      gsap.utils.toArray(".process-item").forEach((el, i) => {
+        const fromX = i % 2 === 0 ? 80 : -80;
+        gsap.fromTo(
+          el,
+          { x: fromX, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 1.0,
+            delay: i * 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".operate-section",
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
           }
-        }
-      );
+        );
+      });
 
-      // 6. Selected Reworks Section Header
+      // 6. Selected Reworks Section Header — clip reveal from bottom
       gsap.fromTo(
         ".reworks-header",
-        { y: 30, opacity: 0 },
+        { clipPath: "inset(100% 0% 0% 0%)", opacity: 0 },
         {
-          y: 0,
+          clipPath: "inset(0% 0% 0% 0%)",
           opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
+          duration: 1.0,
+          ease: "power4.out",
           scrollTrigger: {
             trigger: ".reworks-section",
             start: "top 85%",
@@ -220,15 +259,33 @@ export default function Home() {
         }
       );
 
-      // 8. CTA Content and Action Button Entry
+      // 7b. Project card images — parallax scrub
+      gsap.utils.toArray(".project-card .img-reveal").forEach((img) => {
+        gsap.fromTo(
+          img,
+          { y: 30 },
+          {
+            y: -30,
+            ease: "none",
+            scrollTrigger: {
+              trigger: img.closest(".project-card"),
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.5
+            }
+          }
+        );
+      });
+
+      // 8. CTA Content — clip reveal from right
       gsap.fromTo(
         ".cta-content",
-        { x: -50, opacity: 0 },
+        { clipPath: "inset(0% 100% 0% 0%)", opacity: 0 },
         {
-          x: 0,
+          clipPath: "inset(0% 0% 0% 0%)",
           opacity: 1,
-          duration: 1.0,
-          ease: "power3.out",
+          duration: 1.2,
+          ease: "power4.out",
           scrollTrigger: {
             trigger: ".cta-section",
             start: "top 85%",
@@ -237,14 +294,31 @@ export default function Home() {
         }
       );
 
+      // CTA text parallax on scroll
+      gsap.fromTo(
+        ".cta-content h2",
+        { y: 30 },
+        {
+          y: -15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".cta-section",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1
+          }
+        }
+      );
+
+      // CTA button scale reveal
       gsap.fromTo(
         ".cta-button",
-        { x: 50, opacity: 0 },
+        { scale: 0.8, opacity: 0 },
         {
-          x: 0,
+          scale: 1,
           opacity: 1,
           duration: 1.0,
-          ease: "power3.out",
+          ease: "power4.out",
           scrollTrigger: {
             trigger: ".cta-section",
             start: "top 85%",
@@ -298,7 +372,7 @@ export default function Home() {
   ];
 
   const stats = [
-    { target: 128, suffix: "+", label: "PROJECTS DONE", decimal: false, start: 0 },
+    { target: 20, suffix: "+", label: "PROJECTS DONE", decimal: false, start: 0 },
     { target: 12, suffix: "ms", label: "AVG LATENCY", decimal: false, start: 100 },
     { target: 99, suffix: "%", label: "UPTIME RATE", decimal: false, start: 0 },
     { target: 0.0, suffix: "", label: "COMPROMISES", decimal: true, start: 9.9 }
@@ -379,8 +453,8 @@ export default function Home() {
 
       {/* Focus Bento Grid Section */}
       <section className="focus-section p-6 md:p-12 bg-background select-none overflow-hidden">
-        <div className="flex justify-between items-end mb-12 border-b-thick border-primary pb-4">
-          <h2 className="font-display text-headline-lg font-black uppercase text-primary">OUR FOCUS</h2>
+        <div className="flex justify-between items-end mb-12 border-b-thick border-primary pb-4 section-header-line">
+          <h2 className="section-header-title font-display text-headline-lg font-black uppercase text-primary">OUR FOCUS</h2>
           <span className="font-mono text-label-caps text-secondary font-bold">[ SECTION // 02 ]</span>
         </div>
 
@@ -491,54 +565,68 @@ export default function Home() {
 
       {/* Selected Reworks Portfolio */}
       <section className="reworks-section border-t-thick border-primary bg-background overflow-hidden">
-        <div className="reworks-header p-6 md:p-12 border-b-thin border-primary flex justify-between items-center select-none opacity-0">
-          <h2 className="font-display text-headline-md font-black uppercase text-primary">SELECTED_REWORKS</h2>
-          <div className="flex gap-4">
-            <button className="w-12 h-12 border border-primary flex items-center justify-center cursor-pointer hover:bg-primary hover:text-on-secondary transition-all active:translate-y-[2px] text-primary">
-              <ArrowLeft size={20} />
-            </button>
-            <button className="w-12 h-12 border border-primary flex items-center justify-center cursor-pointer hover:bg-primary hover:text-on-secondary transition-all active:translate-y-[2px] text-primary">
-              <ArrowRight size={20} />
-            </button>
+        <div className="reworks-header py-12 md:py-20 px-6 md:px-12 border-b-thin border-primary flex justify-between items-center select-none opacity-0">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 w-full">
+            <div>
+              <span className="font-mono text-label-caps text-secondary font-bold mb-2 block">[ SECTION // 05 ]</span>
+              <h2 className="font-display text-[40px] md:text-[64px] lg:text-[80px] font-black uppercase leading-[0.85] text-primary">
+                SELECTED<br />WORKS
+              </h2>
+            </div>
+            <div className="flex gap-4 self-end">
+              <button className="w-12 h-12 border border-primary flex items-center justify-center cursor-pointer hover:bg-primary hover:text-on-secondary transition-all active:translate-y-[2px] text-primary">
+                <ArrowLeft size={20} />
+              </button>
+              <button className="w-12 h-12 border border-primary flex items-center justify-center cursor-pointer hover:bg-primary hover:text-on-secondary transition-all active:translate-y-[2px] text-primary">
+                <ArrowRight size={20} />
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Gallery */}
         <div className="grid grid-cols-1 md:grid-cols-3 divide-y-thin md:divide-y-0 md:divide-x-thin divide-primary bg-background">
-          {[
-            {
-              title: "BRUTAL CART",
-              cat: "E-COMMERCE // 2023",
-              img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBTEunwGiIHK5zSy6DsplUyUSaqh_3NtqJb252HDyLXxXIg9dakQr6P8FgE0XBg9ZmyA5akPMhmRYDij0Lbr_3bts3gwpblEunFGNclBB2OpU25v0S8UlecWqVi71BqXfCG83Cy2EqcZNQbG_urvBSgPkY0a3fSg36BqAo1hF62rTDbuhkF1KvzKrlW6Zh2nd-ETsbnFMFGNTvfJ9FfxfnqMXOVKHq7AkIiAWfmmct5N0kLUOsrysi5fT9YnFf4k0elHbNse0LDkPjG"
-            },
-            {
-              title: "BLOCK_SYNC",
-              cat: "FINTECH // 2024",
-              img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAD_OoweFcKkuWgl_0TFwIwXrctx3Rn2EkkV-lwNBJazqvWDiz8JAOTw2wZIZguWgeTWfBxdg_fPoMp3Gbl5__QVgIMwGefvyxTYwVgQkAWnXWk5gJoB1ZNUiQnbXfbU3Mzpl5fv-17q7fEt-nf8BeERtfEzJqLp-4fHC_UFNqfnGomRuJif-sw7cufhB5hj5GOcs1Ub0Xyp5jJ7D_zV4vQEMmnqp15bEfsCWcaljPDI72K6TWdAP4ERP2ynygXuE-2y5VKD4VoGTGB"
-            },
-            {
-              title: "FLOW_STATE",
-              cat: "SAAS // 2023",
-              img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBHgtKumCXE79W8z_mfv9YybKAsoqILQjaehubtOndVmDoEBTnEeIjfsf3FIrGDCt6DYLGGyrUbDejYHauxb3jVTqY-hj22gaVBx3Gtg3Cd-sxT2fbaaF7AJYHSW8NQJMTnOxEVnSf6VJbse1dDAe87aRzUPT0_02jthP4vbudVm06nbG2GuPlFFfGnAl0xEKsvyakAsdXFXCuhuTk_HmkfK43p2RWdKOMZb8t-oxhb-PziQaigQ0YWbNhKydX2He4ONt1zlT3WEg9c"
-            }
-          ].map((project) => (
+          {projectsList.map((project) => (
             <div 
               key={project.title} 
               onClick={() => navigate("/projects")}
-              className="project-card relative aspect-square group overflow-hidden border-b border-primary md:border-b-0 cursor-pointer opacity-0"
+              className="project-card relative cursor-pointer opacity-0 bg-background"
             >
-              <img 
-                alt={project.title} 
-                className="w-full h-full object-cover filter grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0 pointer-events-none img-reveal"
-                loading="lazy"
-                onLoad={(e) => e.currentTarget.classList.add("loaded")}
-                src={project.img}
-              />
-              <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-40 transition-opacity duration-300 pointer-events-none"></div>
-              <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-8 group-hover:translate-y-0 transition-transform duration-300 pointer-events-none">
-                <div className="bg-background border-thick border-primary p-6 neo-shadow">
-                  <span className="font-mono text-label-caps mb-1 font-bold text-secondary">{project.cat}</span>
-                  <h5 className="font-display text-headline-md font-black uppercase text-primary">{project.title}</h5>
+              {/* Inner wrapper for CSS hover effects to prevent conflicts with GSAP inline transform styles */}
+              <div className="w-full h-full flex flex-col group transition-all duration-300 hover:-translate-y-2 hover:neo-shadow-lg bg-surface-container-lowest">
+                {/* Image Container (Top) */}
+                <div className="relative h-[240px] md:h-[320px] p-6 md:p-8 bg-surface-container border-b-thick border-primary flex items-center justify-center overflow-hidden">
+                  <img 
+                    alt={project.title} 
+                    className="max-w-full max-h-full object-contain filter grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 pointer-events-none img-reveal"
+                    loading="lazy"
+                    onLoad={(e) => e.currentTarget.classList.add("loaded")}
+                    src={project.img}
+                  />
+                  <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+
+                {/* Content Container (Bottom) */}
+                <div className="p-6 md:p-8 flex flex-col justify-between flex-grow select-none bg-surface-container-lowest">
+                  <div>
+                    <span className="font-mono text-[10px] md:text-label-caps mb-2 font-bold text-secondary block">
+                      {project.category} // {project.year}
+                    </span>
+                    <h4 className="font-display text-headline-sm md:text-headline-md font-black uppercase text-primary mb-3 group-hover:underline underline-offset-4">
+                      {project.title}
+                    </h4>
+                    <p className="font-mono text-xs md:text-body-sm text-secondary uppercase leading-relaxed mb-6">
+                      {project.desc}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1.5 mt-auto">
+                    {project.chips.slice(0, 3).map((chip) => (
+                      <span key={chip} className="px-2 py-0.5 border border-primary font-mono text-[9px] font-bold">
+                        {chip}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

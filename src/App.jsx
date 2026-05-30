@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import ThreeBackground from "./components/ThreeBackground";
@@ -7,6 +7,10 @@ import BrutalistHeader from "./components/BrutalistHeader";
 import Footer from "./components/Footer";
 import LoadingScreen from "./components/LoadingScreen";
 import { Plus } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 import { Agentation } from "agentation";
 
 // Page imports
@@ -33,6 +37,35 @@ function ScrollToTop() {
   }, [pathname]);
 
   return null;
+}
+
+// Global scroll progress bar — scrubs with page scroll
+function ScrollProgressBar() {
+  const barRef = useRef(null);
+
+  useEffect(() => {
+    if (!barRef.current) return;
+    const tween = gsap.fromTo(
+      barRef.current,
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: document.documentElement,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.3,
+        },
+      }
+    );
+    return () => {
+      if (tween.scrollTrigger) tween.scrollTrigger.kill();
+      tween.kill();
+    };
+  }, []);
+
+  return <div ref={barRef} className="scroll-progress-bar w-full" />;
 }
 
 // Global page loader transitions coordinator that resides inside the <Router> context
@@ -203,6 +236,9 @@ export default function App() {
       <PageLoaderWrapper isMenuOpen={isMenuOpen}>
         {/* Container wraps dynamic 3D canvas backdrop and elements */}
         <div className="relative min-h-screen flex flex-col justify-between overflow-hidden">
+          {/* Scroll Progress Indicator */}
+          <ScrollProgressBar />
+
           {/* Three.js Wallpaper Backdrop */}
           <ThreeBackground />
           
